@@ -1,81 +1,84 @@
-// Pool de Pokémon pre-cargados en memoria (sprites ya descargados).
-// Cuando llega $p, los sprites ya están listos -> respuesta casi instantánea.
-// Ya NO se usan emojis de Discord (esa parte se quitó por los rate limits
-// de la API de creación de emojis al usar mucha variedad de especies).
+// Pool completo: carga los 1025 Pokémon desde disco al arrancar (sprites en memoria).
+// Nunca descarga nada en tiempo real — shuffle constante del array ya cargado.
+// Memoria estimada: 1025 sprites × ~15KB ≈ ~15MB (manejable en Render free tier).
 
-const { fetchSinglePokemonWithSprite } = require('./pokemonService');
+const { fetchSinglePokemonWithSprite, POKEMON_LIST } = require('./pokemonService');
+const { prewarmEmojis } = require('./emojiManager');
 
-const MAX_POKEMON_ID = 1025;
-const POOL_TARGET = 45; // 3 tiradas completas en reserva
-const REFILL_BATCH = 20;
-const REFILL_INTERVAL_MS = 4000;
+let fullPool    = [];   // los 1025 Pokémon con spriteBuffer en memoria
+let shuffled    = [];   // copia barajada para consumo
+let isLoaded    = false;
+let loadPromise = null;
 
-let pool = [];
-let isRefilling = false;
-
-function pickNewIds(count) {
-  const existing = new Set(pool.map((p) => p.id));
-  const ids = [];
-  let attempts = 0;
-  while (ids.length < count && attempts < count * 6) {
-    const id = Math.floor(Math.random() * MAX_POKEMON_ID) + 1;
-    if (!existing.has(id) && !ids.includes(id)) ids.push(id);
-    attempts++;
-  }
-  return ids;
+/** Baraja el array completo y lo asigna a shuffled */
+function reshuffle() {
+  shuffled = [...fullPool].sort(() => Math.random() - 0.5);
 }
 
-async function refillPool() {
-  if (isRefilling || pool.length >= POOL_TARGET) return;
-  isRefilling = true;
+/**
+ * Carga TODOS los sprites desde disco al arrancar.
+ * Como los sprites están en data/sprites/<id>.png, es solo lectura de disco.
+ */
+async function loadAllPokemon() {
+  if (isLoaded) return;
+  if (loadPromise) return loadPromise;
 
-  try {
-    const needed = Math.min(POOL_TARGET - pool.length, REFILL_BATCH);
-    const ids = pickNewIds(needed + 5);
+  loadPromise = (async () => {
+    console.log(`[Pool] Cargando ${POKEMON_LIST.length} Pokémon desde disco...`);
+    const start = Date.now();
 
-    const results = await Promise.all(ids.map((id) => fetchSinglePokemonWithSprite(id)));
-    const valid = results.filter(Boolean);
-
-    for (const p of valid) {
-      if (pool.length < POOL_TARGET) pool.push(p);
+    // Leer todos los sprites en paralelo (lectura de disco, sin red)
+    const BATCH = 100;
+    for (let i = 0; i < POKEMON_LIST.length; i += BATCH) {
+      const batch = POKEMON_LIST.slice(i, i + BATCH);
+      const results = await Promise.all(
+        batch.map(p => fetchSinglePokemonWithSprite(p.id).catch(() => null))
+      );
+      fullPool.push(...results.filter(Boolean));
     }
 
-    console.log(`[Pool] ${pool.length}/${POOL_TARGET} Pokémon listos`);
-  } catch (e) {
-    console.warn('[Pool] Error rellenando pool:', e.message);
-  } finally {
-    isRefilling = false;
-  }
+    reshuffle();
+    isLoaded = true;
+    console.log(`[Pool] ✅ ${fullPool.length} Pokémon listos en ${Date.now() - start}ms`);
+  })();
+
+  return loadPromise;
 }
 
+/**
+ * Devuelve `count` Pokémon únicos del pool shuffled.
+ * Si el shuffled se agota, vuelve a barajar automáticamente.
+ */
 async function takeFromPool(count) {
-  if (pool.length >= count) {
-    const taken = pool.splice(0, count);
-    refillPool().catch(() => {});
-    return taken;
+  if (!isLoaded) {
+    await loadAllPokemon();
   }
 
-  // Pool bajo — fetch de emergencia
-  const taken = pool.splice(0, pool.length);
-  const missing = count - taken.length;
-  console.warn(`[Pool] Pool bajo (${taken.length}/${count}), fetch de emergencia para ${missing}...`);
+  // Si quedan pocos en el shuffled actual, rebara
+  if (shuffled.length < count) {
+    reshuffle();
+  }
 
-  const ids = pickNewIds(missing + 3);
-  const results = await Promise.all(ids.map((id) => fetchSinglePokemonWithSprite(id)));
-  const valid = results.filter(Boolean).slice(0, missing);
-
-  refillPool().catch(() => {});
-  return [...taken, ...valid];
+  return shuffled.splice(0, count);
 }
 
-function startPool() {
-  console.log('[Pool] Iniciando pre-carga de Pokémon en background...');
-  refillPool().catch(() => {});
-  setInterval(() => refillPool().catch(() => {}), REFILL_INTERVAL_MS);
+/**
+ * Arranca la carga del pool y pre-calienta emojis en background.
+ * Se llama desde ready.js cuando el bot se conecta.
+ */
+function startPool(guild) {
+  loadAllPokemon().then(() => {
+    if (guild) {
+      // Pre-calentar los emojis de los primeros 45 Pokémon shuffled (silencioso)
+      prewarmEmojis(guild, shuffled.slice(0, 45)).catch(() => {});
+    }
+  }).catch(err => {
+    console.error('[Pool] Error cargando Pokémon:', err.message);
+  });
 }
 
 function poolSize() {
-  return pool.length;
+  return fullPool.length;
 }
 
 module.exports = { startPool, takeFromPool, poolSize };

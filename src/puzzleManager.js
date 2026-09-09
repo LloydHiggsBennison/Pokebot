@@ -1,6 +1,6 @@
 const { prepareRollEmojis } = require('./emojiManager');
 const { takeFromPool } = require('./pokemonPool');
-const { getGuildSettings, getLastRoll, setLastRoll, addCapture } = require('./database');
+const { getGuildSettings, getLastRoll, setLastRoll, addCapture, hasCapture } = require('./database');
 const { getNewBadgeEmoji } = require('./badgeManager');
 
 const NUM_ROWS = 5;
@@ -108,25 +108,39 @@ async function rollPuzzle(message) {
   });
   const gridText = gridLines.join('\n');
 
-  // 4. Texto del resultado — badge + emoji del ganador inline
+  // 4. Verificar qué ganadores son NUEVOS (antes de guardar en BBDD)
   const badge = await getNewBadgeEmoji(message.guild);
+  const isNewMap = new Map();
+  await Promise.all(
+    winners.map(async w => {
+      const alreadyHas = await hasCapture(guildId, userId, w.name);
+      isNewMap.set(w.id, !alreadyHas);
+    })
+  );
 
-  let resultText;
-  if (winners.length === 0) {
-    resultText = `${username}: No has ganado ningún Pokémon.`;
-  } else if (winners.length === 1) {
-    const e = emojiMap.get(winners[0].id) || '';
-    resultText = `${username}: ${badge} ${e} Has ganado un **${capitalize(winners[0].name)}**`;
-  } else {
-    const names = winners.map(w => `${emojiMap.get(w.id) || ''} **${capitalize(w.name)}**`).join(', ');
-    resultText = `${username}: ${badge} Has ganado ${winners.length} Pokémon: ${names}`;
-  }
-
-  // 5. Guardar en BBDD + enviar mensajes (todo en paralelo)
+  // 5. Guardar en BBDD + enviar mensajes (en paralelo)
   await Promise.all([
     setLastRoll(guildId, userId, now),
     ...winners.map(w => addCapture(guildId, userId, w.name, w.id)),
   ]);
+
+  // 6. Texto del resultado con badge condicional
+  let resultText;
+  if (winners.length === 0) {
+    resultText = `${username}: No has ganado ningún Pokémon.`;
+  } else if (winners.length === 1) {
+    const w = winners[0];
+    const e = emojiMap.get(w.id) || '';
+    const b = isNewMap.get(w.id) ? `${badge} ` : '';
+    resultText = `${username}: ${b}${e} Has ganado un **${capitalize(w.name)}**`;
+  } else {
+    const names = winners.map(w => {
+      const e = emojiMap.get(w.id) || '';
+      const b = isNewMap.get(w.id) ? `${badge} ` : '';
+      return `${b}${e} **${capitalize(w.name)}**`;
+    }).join(', ');
+    resultText = `${username}: Has ganado ${winners.length} Pokémon: ${names}`;
+  }
 
   // 6. Primero el grid de emojis (reply), luego el resultado debajo (send)
   await message.reply(gridText);

@@ -190,11 +190,32 @@ async function setLastRoll(guildId, userId, timestamp) {
   }
 }
 
+/** Devuelve true si el usuario ya tiene al menos 1 captura de ese pokémon (antes de este roll) */
+async function hasCapture(guildId, userId, pokemonName) {
+  if (useSupabase) {
+    const { data } = await supabase
+      .from('captures')
+      .select('id')
+      .eq('guild_id', guildId)
+      .eq('user_id', userId)
+      .eq('pokemon_name', pokemonName)
+      .limit(1)
+      .maybeSingle();
+    return !!data;
+  } else {
+    const row = db
+      .prepare('SELECT id FROM captures WHERE guild_id = ? AND user_id = ? AND pokemon_name = ? LIMIT 1')
+      .get(guildId, userId, pokemonName);
+    return !!row;
+  }
+}
+
 module.exports = {
   getGuildSettings,
   updateGuildSettings,
   addCapture,
   getUserCaptures,
+  hasCapture,
   getLastRoll,
   setLastRoll,
 };

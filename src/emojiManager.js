@@ -1,37 +1,30 @@
 const sharp = require('sharp');
 
 // Caché local: pokemon_id → emoji string "<:pkv2_X:id>"
-// Se mantiene en memoria para no consultar la API de Discord en cada $p.
 const localCache = new Map();
 
-const MAX_EMOJIS = 48; // Dejar 2 slots de margen sobre el límite de 50
+const MAX_EMOJIS   = 48;
 const EMOJI_PREFIX = 'pkv2_';
 
-/**
- * Libera espacio de emojis del bot si hace falta, UNA sola vez por lote
- * (evita que varias subidas en paralelo intenten evictar al mismo tiempo).
- */
 async function ensureCapacity(guild, neededSlots) {
   const freeSlots = MAX_EMOJIS - guild.emojis.cache.size;
   if (freeSlots >= neededSlots) return;
 
-  const toFree = neededSlots - freeSlots;
+  const toFree = neededSlots - freeSlots + 2; // un poco de margen
   const botEmojis = guild.emojis.cache
-    .filter((e) => e.name.startsWith(EMOJI_PREFIX))
+    .filter(e => e.name.startsWith(EMOJI_PREFIX) || e.name.startsWith('pk_'))
     .first(toFree);
 
-  await Promise.all(
-    botEmojis.map((e) => {
-      localCache.delete(Number(e.name.replace(EMOJI_PREFIX, '')));
-      return e.delete('Liberando espacio para nuevos Pokémon').catch(() => {});
-    })
-  );
+  for (const e of botEmojis) {
+    localCache.delete(Number(e.name.replace(EMOJI_PREFIX, '').replace('pk_', '')));
+    await e.delete('Liberando espacio').catch(() => {});
+  }
 }
 
 /**
- * Devuelve el emoji string para un Pokémon, creándolo si no existe.
- * Usa caché local primero, luego caché de Discord.js, y solo sube si es nuevo.
- * Asume que ya se llamó a ensureCapacity() antes si se está creando en lote.
+ * Devuelve el emoji string para un Pokémon.
+ * Caché local → caché Discord.js → crea el emoji (si hace falta).
+ * Creación SECUENCIAL para respetar los rate limits de Discord.
  */
 async function getOrCreateEmoji(guild, pokemon) {
   const emojiName = `${EMOJI_PREFIX}${pokemon.id}`;
@@ -40,14 +33,16 @@ async function getOrCreateEmoji(guild, pokemon) {
   if (localCache.has(pokemon.id)) return localCache.get(pokemon.id);
 
   // 2. Caché de Discord.js (ya en memoria, 0ms)
-  const existing = guild.emojis.cache.find((e) => e.name === emojiName);
+  const existing = guild.emojis.cache.find(e => e.name === emojiName);
   if (existing) {
     localCache.set(pokemon.id, existing.toString());
     return existing.toString();
   }
 
-  // 3. Crear el emoji en el servidor
+  // 3. Crear el emoji en Discord (máx 1 a la vez para evitar rate limits)
   try {
+    await ensureCapacity(guild, 1);
+
     const processedBuffer = await sharp(pokemon.spriteBuffer)
       .trim()
       .resize(128, 128, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
@@ -60,33 +55,33 @@ async function getOrCreateEmoji(guild, pokemon) {
     return str;
   } catch (err) {
     console.warn(`[Emoji] No se pudo crear ${emojiName}:`, err.message);
-    return '';
+    return ''; // sin emoji si falla
   }
 }
 
 /**
- * Prepara emojis para una lista de Pokémon EN PARALELO.
- * Los que ya están en caché son gratuitos (0ms).
- * Los nuevos liberan espacio una sola vez y se suben todos a la vez.
+ * Prepara emojis para una lista de Pokémon de forma SECUENCIAL.
+ * Los que ya están en caché se resuelven en 0ms.
+ * Los nuevos se crean uno a uno para no hacer rate limit con Discord.
  */
 async function prepareRollEmojis(guild, items) {
-  const pending = items.filter((p) => !localCache.has(p.id));
-  if (pending.length > 0) {
-    await ensureCapacity(guild, pending.length);
+  const results = [];
+  for (const item of items) {
+    results.push(await getOrCreateEmoji(guild, item));
   }
-  return Promise.all(items.map((item) => getOrCreateEmoji(guild, item)));
+  return results;
 }
 
 /**
- * Pre-calienta emojis para una lista de Pokémon en background, EN PARALELO.
- * Antes se hacía uno por uno (mucho más lento); ahora se libera espacio una
- * vez y se lanzan todas las subidas a la vez.
+ * Pre-calienta emojis en background, secuencialmente.
+ * Al ser background no bloquea $p.
  */
 async function prewarmEmojis(guild, pokemons) {
-  const pending = pokemons.filter((p) => !localCache.has(p.id));
-  if (pending.length === 0) return;
-  await ensureCapacity(guild, pending.length);
-  await Promise.all(pending.map((pokemon) => getOrCreateEmoji(guild, pokemon).catch(() => {})));
+  for (const pokemon of pokemons) {
+    if (!localCache.has(pokemon.id)) {
+      await getOrCreateEmoji(guild, pokemon).catch(() => {});
+    }
+  }
 }
 
 module.exports = { prepareRollEmojis, prewarmEmojis };
