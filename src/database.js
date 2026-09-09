@@ -13,45 +13,40 @@ if (supabaseUrl && supabaseKey) {
   supabase = createClient(supabaseUrl, supabaseKey);
   console.log('⚡ Base de datos conectada a Supabase (PostgreSQL)');
 } else {
-  const Database = require('better-sqlite3');
-  db = new Database(path.join(__dirname, '..', 'pokebot.sqlite'));
-  db.pragma('journal_mode = WAL');
-
-  db.exec(`
-  CREATE TABLE IF NOT EXISTS guild_settings (
-    guild_id TEXT PRIMARY KEY,
-    spawn_channel_id TEXT,
-    mode TEXT DEFAULT 'messages',
-    msg_min INTEGER DEFAULT 15,
-    msg_max INTEGER DEFAULT 40,
-    time_interval_seconds INTEGER DEFAULT 1800,
-    catch_command TEXT DEFAULT '$p',
-    enabled INTEGER DEFAULT 1,
-    puzzle_cooldown_seconds INTEGER DEFAULT 0
-  );
-
-  CREATE TABLE IF NOT EXISTS captures (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    guild_id TEXT,
-    user_id TEXT,
-    pokemon_name TEXT,
-    pokemon_id INTEGER,
-    caught_at INTEGER
-  );
-
-  CREATE TABLE IF NOT EXISTS user_rolls (
-    guild_id TEXT,
-    user_id TEXT,
-    last_roll INTEGER,
-    PRIMARY KEY (guild_id, user_id)
-  );
-  `);
-
+  // SQLite como fallback local (solo para desarrollo en PC)
   try {
-    db.exec('ALTER TABLE guild_settings ADD COLUMN puzzle_cooldown_seconds INTEGER DEFAULT 0;');
-  } catch (e) {}
-
-  console.log('📁 Base de datos conectada a SQLite local (pokebot.sqlite)');
+    const Database = require('better-sqlite3');
+    db = new Database(path.join(__dirname, '..', 'pokebot.sqlite'));
+    db.pragma('journal_mode = WAL');
+    db.exec(`
+    CREATE TABLE IF NOT EXISTS guild_settings (
+      guild_id TEXT PRIMARY KEY,
+      spawn_channel_id TEXT,
+      mode TEXT DEFAULT 'messages',
+      msg_min INTEGER DEFAULT 15,
+      msg_max INTEGER DEFAULT 40,
+      time_interval_seconds INTEGER DEFAULT 1800,
+      catch_command TEXT DEFAULT '$p',
+      enabled INTEGER DEFAULT 1,
+      puzzle_cooldown_seconds INTEGER DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS captures (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      guild_id TEXT, user_id TEXT,
+      pokemon_name TEXT, pokemon_id INTEGER, caught_at INTEGER
+    );
+    CREATE TABLE IF NOT EXISTS user_rolls (
+      guild_id TEXT, user_id TEXT, last_roll INTEGER,
+      PRIMARY KEY (guild_id, user_id)
+    );
+    `);
+    try { db.exec('ALTER TABLE guild_settings ADD COLUMN puzzle_cooldown_seconds INTEGER DEFAULT 0;'); } catch (_) {}
+    console.log('📁 Base de datos conectada a SQLite local (pokebot.sqlite)');
+  } catch (_) {
+    console.error('❌ No hay Supabase configurado y better-sqlite3 no está disponible.');
+    console.error('   Configura SUPABASE_URL y SUPABASE_KEY en las variables de entorno.');
+    process.exit(1);
+  }
 }
 
 // ----------------------------------------------------

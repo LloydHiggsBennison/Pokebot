@@ -3,9 +3,11 @@ services:
     name: pokebot
     env: node
     plan: free
+    region: oregon
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /
+    nodeVersion: 20.x
     envVars:
       - key: DISCORD_TOKEN
         sync: false
