@@ -52,6 +52,8 @@ async function getOrCreateEmoji(guild, pokemon) {
     const created = await guild.emojis.create({ attachment: processedBuffer, name: emojiName });
     const str = created.toString();
     localCache.set(pokemon.id, str);
+    // Pequeña pausa para respetar el rate limit de Discord en creación de emojis
+    await new Promise(r => setTimeout(r, 600));
     return str;
   } catch (err) {
     console.warn(`[Emoji] No se pudo crear ${emojiName}:`, err.message);
