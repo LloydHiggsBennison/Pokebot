@@ -1,9 +1,10 @@
-const { AttachmentBuilder } = require('discord.js');
+const { prepareRollEmojis } = require('./emojiManager');
 const { takeFromPool } = require('./pokemonPool');
-const { buildPuzzleImage } = require('./imageGrid');
 const { getGuildSettings, getLastRoll, setLastRoll, addCapture } = require('./database');
 
 const NUM_ROWS = 5;
+const BELL  = '🔔';
+const CROSS = '❌';
 
 const OUTCOME_TABLE = [
   { count: 0, weight: 0.10 },
@@ -45,9 +46,9 @@ function capitalize(str) {
 
 async function rollPuzzle(message) {
   const guildId = message.guild.id;
-  const userId = message.author.id;
+  const userId  = message.author.id;
+  const username = message.author.username; // sin @ ni mención
 
-  // Estas dos consultas no dependen entre sí -> en paralelo, no en serie
   const [settings, lastRoll] = await Promise.all([
     getGuildSettings(guildId),
     getLastRoll(guildId, userId),
@@ -58,19 +59,19 @@ async function rollPuzzle(message) {
 
   if (cooldownMs > 0 && now - lastRoll < cooldownMs) {
     const remaining = formatCooldown(cooldownMs - (now - lastRoll));
-    await message.reply(`⏳ Todavía no puedes tirar. Espera **${remaining}**.`);
+    await message.reply(`⏳ Espera **${remaining}** para volver a tirar.`);
     return;
   }
 
-  // 1. Tomar 15 Pokémon del pool pre-cargado en memoria (ya con sprite descargado)
+  // 1. Pokémon del pool pre-cargado (0ms si el pool tiene stock)
   const pool = await takeFromPool(15);
   let poolIdx = 0;
   const next = () => { const p = pool[poolIdx % pool.length]; poolIdx++; return p; };
 
-  const winnerCount = pickWinnerCount();
+  const winnerCount      = pickWinnerCount();
   const winnerRowIndices = new Set(pickRandomIndices(NUM_ROWS, winnerCount));
 
-  const rows = [];
+  const rows    = [];
   const winners = [];
 
   for (let r = 0; r < NUM_ROWS; r++) {
@@ -85,28 +86,48 @@ async function rollPuzzle(message) {
     }
   }
 
-  // 2. Generar la imagen del puzzle localmente (sin llamar a la API de Discord)
-  const imageBuffer = await buildPuzzleImage(rows);
-  const attachment = new AttachmentBuilder(imageBuffer, { name: 'puzzle.png' });
+  // 2. Emojis: obtener todos los únicos del grid + los ganadores
+  const uniqueMap = new Map();
+  for (const row of rows)
+    for (const p of row.items)
+      if (!uniqueMap.has(p.id)) uniqueMap.set(p.id, p);
 
-  // 3. Construir el texto del resultado
+  const uniqueList   = [...uniqueMap.values()];
+  const emojiStrings = await prepareRollEmojis(message.guild, uniqueList);
+
+  // Mapa rápido id → emoji string
+  const emojiMap = new Map();
+  uniqueList.forEach((p, i) => emojiMap.set(p.id, emojiStrings[i] || '❓'));
+
+  // 3. Construir el grid como texto de emojis
+  //    Al ser solo emojis por línea, Discord los muestra en tamaño jumbo
+  const gridLines = rows.map(row => {
+    const pokeEmojis = row.items.map(p => emojiMap.get(p.id)).join(' ');
+    return `${pokeEmojis} ${row.isWinner ? BELL : CROSS}`;
+  });
+  const gridText = gridLines.join('\n');
+
+  // 4. Texto del resultado — username sin @mención, emoji del ganador inline
   let resultText;
   if (winners.length === 0) {
-    resultText = `${message.author}: No has ganado ningún Pokémon esta vez.`;
+    resultText = `${username}: No has ganado ningún Pokémon.`;
   } else if (winners.length === 1) {
-    resultText = `${message.author}: 🆕 Has ganado un **${capitalize(winners[0].name)}**`;
+    const e = emojiMap.get(winners[0].id) || '';
+    resultText = `${username}: ${e} Has ganado un **${capitalize(winners[0].name)}**`;
   } else {
-    const names = winners.map((w) => `**${capitalize(w.name)}**`).join(', ');
-    resultText = `${message.author}: 🍀 ¡Golpe de suerte! Ganaste ${winners.length}: ${names}`;
+    const names = winners.map(w => `${emojiMap.get(w.id) || ''} **${capitalize(w.name)}**`).join(', ');
+    resultText = `${username}: Has ganado ${winners.length} Pokémon: ${names}`;
   }
 
-  // 4. Enviar el mensaje y guardar en base de datos AL MISMO TIEMPO
-  //    (el usuario no espera a que Supabase confirme el guardado)
+  // 5. Guardar en BBDD + enviar mensajes (todo en paralelo)
   await Promise.all([
-    message.reply({ content: resultText, files: [attachment] }),
     setLastRoll(guildId, userId, now),
-    ...winners.map((w) => addCapture(guildId, userId, w.name, w.id)),
+    ...winners.map(w => addCapture(guildId, userId, w.name, w.id)),
   ]);
+
+  // 6. Primero el grid de emojis (reply), luego el resultado debajo (send)
+  await message.reply(gridText);
+  await message.channel.send(resultText);
 }
 
 module.exports = { rollPuzzle };
