@@ -7,7 +7,7 @@ services:
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /
-    nodeVersion: 20.x
+    nodeVersion: 22.x
     envVars:
       - key: DISCORD_TOKEN
         sync: false
