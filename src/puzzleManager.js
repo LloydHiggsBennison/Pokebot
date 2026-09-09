@@ -1,6 +1,7 @@
 const { prepareRollEmojis } = require('./emojiManager');
 const { takeFromPool } = require('./pokemonPool');
 const { getGuildSettings, getLastRoll, setLastRoll, addCapture } = require('./database');
+const { getNewBadgeEmoji } = require('./badgeManager');
 
 const NUM_ROWS = 5;
 const BELL  = '🔔';
@@ -107,16 +108,18 @@ async function rollPuzzle(message) {
   });
   const gridText = gridLines.join('\n');
 
-  // 4. Texto del resultado — username sin @mención, emoji del ganador inline
+  // 4. Texto del resultado — badge + emoji del ganador inline
+  const badge = await getNewBadgeEmoji(message.guild);
+
   let resultText;
   if (winners.length === 0) {
     resultText = `${username}: No has ganado ningún Pokémon.`;
   } else if (winners.length === 1) {
     const e = emojiMap.get(winners[0].id) || '';
-    resultText = `${username}: ${e} Has ganado un **${capitalize(winners[0].name)}**`;
+    resultText = `${username}: ${badge} ${e} Has ganado un **${capitalize(winners[0].name)}**`;
   } else {
     const names = winners.map(w => `${emojiMap.get(w.id) || ''} **${capitalize(w.name)}**`).join(', ');
-    resultText = `${username}: Has ganado ${winners.length} Pokémon: ${names}`;
+    resultText = `${username}: ${badge} Has ganado ${winners.length} Pokémon: ${names}`;
   }
 
   // 5. Guardar en BBDD + enviar mensajes (todo en paralelo)
