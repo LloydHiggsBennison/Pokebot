@@ -1,0 +1,9 @@
+node_modules/
+.env
+pokebot.sqlite
+pokebot.sqlite-shm
+pokebot.sqlite-wal
+*.log
+
+# Sprites cacheados localmente (se descargan automáticamente en el servidor)
+data/sprites/
