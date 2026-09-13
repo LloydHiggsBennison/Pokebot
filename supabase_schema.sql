@@ -33,6 +33,10 @@ CREATE TABLE IF NOT EXISTS user_rolls (
   PRIMARY KEY (guild_id, user_id)
 );
 
+-- Evita recorrer todo el historial para cada badge NEW.
+CREATE INDEX IF NOT EXISTS captures_owner_pokemon_idx
+  ON captures (guild_id, user_id, pokemon_name);
+
 -- Permisos totales de lectura/escritura para la API del Bot
 GRANT ALL ON ALL TABLES IN SCHEMA public TO postgres, anon, authenticated, service_role;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO postgres, anon, authenticated, service_role;

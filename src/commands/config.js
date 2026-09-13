@@ -83,6 +83,7 @@ module.exports = {
     if (sub === 'canal') {
       const canal = interaction.options.getChannel('canal');
       await updateGuildSettings(guildId, { spawn_channel_id: canal.id });
+      await restartTimeSpawner(interaction.client, guildId);
       return interaction.reply(`✅ Canal de spawns configurado en ${canal}.`);
     }
 

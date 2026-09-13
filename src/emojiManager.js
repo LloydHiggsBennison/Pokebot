@@ -1,89 +1,90 @@
 const sharp = require('sharp');
+const { readFile } = require('node:fs/promises');
+const path = require('node:path');
+const { POKEMON_LIST, fetchSinglePokemonWithSprite } = require('./pokemonService');
 
-// Caché local: pokemon_id → emoji string "<:pkv2_X:id>"
-const localCache = new Map();
-
-const MAX_EMOJIS   = 48;
 const EMOJI_PREFIX = 'pkv2_';
+const BADGE_NAME = 'pk_new';
+const MAX_APPLICATION_EMOJIS = 2000;
+// Each application has its own catalog. No guild emoji is created or deleted.
+const catalogs = new WeakMap();
 
-async function ensureCapacity(guild, neededSlots) {
-  const freeSlots = MAX_EMOJIS - guild.emojis.cache.size;
-  if (freeSlots >= neededSlots) return;
-
-  const toFree = neededSlots - freeSlots + 2; // un poco de margen
-  const botEmojis = guild.emojis.cache
-    .filter(e => e.name.startsWith(EMOJI_PREFIX) || e.name.startsWith('pk_'))
-    .first(toFree);
-
-  for (const e of botEmojis) {
-    localCache.delete(Number(e.name.replace(EMOJI_PREFIX, '').replace('pk_', '')));
-    await e.delete('Liberando espacio').catch(() => {});
+function catalogFor(client) {
+  if (!catalogs.has(client)) {
+    catalogs.set(client, { status: 'starting', emojis: new Map(), promise: null });
   }
+  return catalogs.get(client);
 }
 
-/**
- * Devuelve el emoji string para un Pokémon.
- * Caché local → caché Discord.js → crea el emoji (si hace falta).
- * Creación SECUENCIAL para respetar los rate limits de Discord.
- */
-async function getOrCreateEmoji(guild, pokemon) {
-  const emojiName = `${EMOJI_PREFIX}${pokemon.id}`;
-
-  // 1. Caché local (0ms)
-  if (localCache.has(pokemon.id)) return localCache.get(pokemon.id);
-
-  // 2. Caché de Discord.js (ya en memoria, 0ms)
-  const existing = guild.emojis.cache.find(e => e.name === emojiName);
-  if (existing) {
-    localCache.set(pokemon.id, existing.toString());
-    return existing.toString();
-  }
-
-  // 3. Crear el emoji en Discord (máx 1 a la vez para evitar rate limits)
-  try {
-    await ensureCapacity(guild, 1);
-
-    const processedBuffer = await sharp(pokemon.spriteBuffer)
-      .trim()
-      .resize(128, 128, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-      .png()
-      .toBuffer();
-
-    const created = await guild.emojis.create({ attachment: processedBuffer, name: emojiName });
-    const str = created.toString();
-    localCache.set(pokemon.id, str);
-    // Pequeña pausa para respetar el rate limit de Discord en creación de emojis
-    await new Promise(r => setTimeout(r, 600));
-    return str;
-  } catch (err) {
-    console.warn(`[Emoji] No se pudo crear ${emojiName}:`, err.message);
-    return ''; // sin emoji si falla
-  }
+function getEmojiStatus(client) {
+  const catalog = catalogFor(client);
+  return { status: catalog.status, loaded: catalog.emojis.size, total: POKEMON_LIST.length + 1 };
 }
 
-/**
- * Prepara emojis para una lista de Pokémon de forma SECUENCIAL.
- * Los que ya están en caché se resuelven en 0ms.
- * Los nuevos se crean uno a uno para no hacer rate limit con Discord.
- */
-async function prepareRollEmojis(guild, items) {
-  const results = [];
-  for (const item of items) {
-    results.push(await getOrCreateEmoji(guild, item));
-  }
-  return results;
+// Keep the exact pkv2 image transformation: trim, transparent 128x128, PNG.
+function processPokemonSprite(buffer) {
+  return sharp(buffer)
+    .trim()
+    .resize(128, 128, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer();
 }
 
-/**
- * Pre-calienta emojis en background, secuencialmente.
- * Al ser background no bloquea $p.
- */
-async function prewarmEmojis(guild, pokemons) {
-  for (const pokemon of pokemons) {
-    if (!localCache.has(pokemon.id)) {
-      await getOrCreateEmoji(guild, pokemon).catch(() => {});
+function initializeEmojis(client) {
+  const catalog = catalogFor(client);
+  if (catalog.status === 'ready') return Promise.resolve();
+  if (catalog.promise) return catalog.promise;
+  catalog.status = 'loading';
+  catalog.promise = (async () => {
+    const manager = client.application?.emojis;
+    if (!manager) throw new Error('La aplicación de Discord aún no está disponible.');
+    const existing = await manager.fetch();
+    const byName = new Map([...existing.values()].map(emoji => [emoji.name, emoji.toString()]));
+    const names = [...POKEMON_LIST.map(p => `${EMOJI_PREFIX}${p.id}`), BADGE_NAME];
+    catalog.emojis.clear();
+    for (const name of names) {
+      if (byName.has(name)) catalog.emojis.set(name, byName.get(name));
     }
-  }
+    const missing = names.length - catalog.emojis.size;
+    if (existing.size + missing > MAX_APPLICATION_EMOJIS) {
+      throw new Error(`Se necesitan ${missing} espacios para emojis de aplicación; solo hay ${MAX_APPLICATION_EMOJIS - existing.size}.`);
+    }
+    console.log(`[Emojis] ${catalog.emojis.size}/${names.length} existentes; ${missing} por preparar.`);
+    // Only startup/setup uploads. Sequential, single-flight, resumable on restart.
+    // Discord.js respects Retry-After; no arbitrary sleeps or guild rate-limit queue.
+    for (const pokemon of POKEMON_LIST) {
+      const name = `${EMOJI_PREFIX}${pokemon.id}`;
+      if (catalog.emojis.has(name)) continue;
+      const full = await fetchSinglePokemonWithSprite(pokemon.id);
+      if (!full) throw new Error(`No se pudo cargar el sprite ${pokemon.id}.`);
+      const attachment = await processPokemonSprite(full.spriteBuffer);
+      const created = await manager.create({ attachment, name });
+      catalog.emojis.set(name, created.toString());
+      if (catalog.emojis.size % 50 === 0) console.log(`[Emojis] ${catalog.emojis.size}/${names.length} preparados.`);
+    }
+    if (!catalog.emojis.has(BADGE_NAME)) {
+      const attachment = await readFile(path.join(__dirname, '..', 'assets', 'new_badge.webp'));
+      const created = await manager.create({ attachment, name: BADGE_NAME });
+      catalog.emojis.set(BADGE_NAME, created.toString());
+    }
+    catalog.status = 'ready';
+    console.log(`[Emojis] Listos: ${names.length}. Las tiradas no suben ni borran emojis.`);
+  })().catch(error => {
+    catalog.status = 'error';
+    throw error;
+  }).finally(() => { catalog.promise = null; });
+  return catalog.promise;
 }
 
-module.exports = { prepareRollEmojis, prewarmEmojis };
+function getPreparedEmoji(client, name) {
+  const catalog = catalogFor(client);
+  const emoji = catalog.emojis.get(name);
+  if (catalog.status !== 'ready' || !emoji) throw new Error(`Emoji no preparado: ${name}`);
+  return emoji;
+}
+
+function prepareRollEmojis(guild, items) {
+  return items.map(item => getPreparedEmoji(guild.client, `${EMOJI_PREFIX}${item.id}`));
+}
+
+module.exports = { initializeEmojis, prepareRollEmojis, getPreparedEmoji, getEmojiStatus, processPokemonSprite };

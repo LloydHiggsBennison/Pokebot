@@ -1,6 +1,6 @@
-const { prepareRollEmojis, getEmojiStatus } = require('./emojiManager');
+const { prepareRollEmojis } = require('./emojiManager');
 const { takeFromPool } = require('./pokemonPool');
-const { getGuildSettings, getLastRoll, setLastRoll, addCaptures, hasCapture } = require('./database');
+const { getGuildSettings, getLastRoll, setLastRoll, addCapture, hasCapture } = require('./database');
 const { getNewBadgeEmoji } = require('./badgeManager');
 
 const NUM_ROWS = 5;
@@ -45,40 +45,17 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-const activeRolls = new Set();
-
-async function rollPuzzle(message, settings) {
-  const status = getEmojiStatus(message.guild.client);
-  if (status.status !== 'ready') {
-    const text = status.status === 'error'
-      ? '❌ No se pudo preparar el catálogo de Pokémon. El administrador debe revisar la consola y reiniciar el bot.'
-      : `⏳ Preparando los emojis de Pokémon (${status.loaded}/${status.total}). Vuelve a tirar cuando termine la preparación inicial.`;
-    await message.reply(text);
-    return;
-  }
-  const key = `${message.guild.id}:${message.author.id}`;
-  if (activeRolls.has(key)) {
-    await message.reply('⏳ Tu tirada anterior todavía está en curso.');
-    return;
-  }
-  activeRolls.add(key);
-  const started = performance.now();
-  try {
-    await executeRoll(message, settings, started);
-  } finally {
-    activeRolls.delete(key);
-  }
-}
-
-async function executeRoll(message, providedSettings, started) {
+async function rollPuzzle(message) {
   const guildId = message.guild.id;
   const userId  = message.author.id;
   const username = message.author.username; // sin @ ni mención
 
-  const settings = providedSettings || await getGuildSettings(guildId);
+  const [settings, lastRoll] = await Promise.all([
+    getGuildSettings(guildId),
+    getLastRoll(guildId, userId),
+  ]);
+
   const cooldownMs = (settings.puzzle_cooldown_seconds ?? 0) * 1000;
-  const lastRoll = cooldownMs > 0 ? await getLastRoll(guildId, userId) : 0;
-  const settingsDone = performance.now();
   const now = Date.now();
 
   if (cooldownMs > 0 && now - lastRoll < cooldownMs) {
@@ -87,8 +64,8 @@ async function executeRoll(message, providedSettings, started) {
     return;
   }
 
-  // 1. Full catalog in memory; no sprite reads or network calls.
-  const pool = takeFromPool(15);
+  // 1. Pokémon del pool pre-cargado (0ms si el pool tiene stock)
+  const pool = await takeFromPool(15);
   let poolIdx = 0;
   const next = () => { const p = pool[poolIdx % pool.length]; poolIdx++; return p; };
 
@@ -117,11 +94,11 @@ async function executeRoll(message, providedSettings, started) {
       if (!uniqueMap.has(p.id)) uniqueMap.set(p.id, p);
 
   const uniqueList   = [...uniqueMap.values()];
-  const emojiStrings = prepareRollEmojis(message.guild, uniqueList);
+  const emojiStrings = await prepareRollEmojis(message.guild, uniqueList);
 
   // Mapa rápido id → emoji string
   const emojiMap = new Map();
-  uniqueList.forEach((p, i) => emojiMap.set(p.id, emojiStrings[i]));
+  uniqueList.forEach((p, i) => emojiMap.set(p.id, emojiStrings[i] || '❓'));
 
   // 3. Construir el grid como texto de emojis
   //    Al ser solo emojis por línea, Discord los muestra en tamaño jumbo
@@ -132,7 +109,7 @@ async function executeRoll(message, providedSettings, started) {
   const gridText = gridLines.join('\n');
 
   // 4. Verificar qué ganadores son NUEVOS (antes de guardar en BBDD)
-  const badge = winners.length ? getNewBadgeEmoji(message.guild) : '';
+  const badge = await getNewBadgeEmoji(message.guild);
   const isNewMap = new Map();
   await Promise.all(
     winners.map(async w => {
@@ -141,14 +118,11 @@ async function executeRoll(message, providedSettings, started) {
     })
   );
 
-  // 5. Finish both writes before releasing the user lock, also on failure.
-  const writes = await Promise.allSettled([
+  // 5. Guardar en BBDD + enviar mensajes (en paralelo)
+  await Promise.all([
     setLastRoll(guildId, userId, now),
-    addCaptures(guildId, userId, winners),
+    ...winners.map(w => addCapture(guildId, userId, w.name, w.id)),
   ]);
-  const failure = writes.find(result => result.status === 'rejected');
-  if (failure) throw failure.reason;
-  const databaseDone = performance.now();
 
   // 6. Texto del resultado con badge condicional
   let resultText;
@@ -170,14 +144,7 @@ async function executeRoll(message, providedSettings, started) {
 
   // 6. Primero el grid de emojis (reply), luego el resultado debajo (send)
   await message.reply(gridText);
-  const gridSent = performance.now();
   await message.channel.send(resultText);
-  console.log(JSON.stringify({ event: 'roll_timing', guildId, userId,
-    settingsMs: Math.round(settingsDone - started),
-    prepareAndSaveMs: Math.round(databaseDone - settingsDone),
-    gridSendMs: Math.round(gridSent - databaseDone),
-    totalMs: Math.round(performance.now() - started),
-  }));
 }
 
 module.exports = { rollPuzzle };

@@ -5,7 +5,11 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "deploy": "node src/deploy-commands.js"
+    "deploy": "node src/deploy-commands.js",
+    "setup:emojis": "node scripts/setup-emojis.js",
+    "sprites": "node scripts/download-sprites.js",
+    "test": "node --test test/*.test.js",
+    "benchmark": "node test/benchmark.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.115.0",

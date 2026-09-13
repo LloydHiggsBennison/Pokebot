@@ -8,16 +8,17 @@ module.exports = {
   async execute(message, client) {
     if (message.author.bot || !message.guild) return;
 
-    const settings = await getGuildSettings(message.guild.id);
-    const catchCmd = (settings.catch_command || '$p').trim();
     const content = message.content.trim();
+    // $p can report initialization immediately, even if the database is down.
+    const settings = content.toLowerCase() === '$p' ? null : await getGuildSettings(message.guild.id);
+    const catchCmd = (settings?.catch_command || '$p').trim();
 
     // "$p" solo o el comando de captura configurado sin parámetros -> tirada personal (puzzle de 15 pokemon)
     if (content.toLowerCase() === '$p' || content.toLowerCase() === catchCmd.toLowerCase()) {
       console.log(`[$p] ${message.author.tag} en guild ${message.guild.id} inició una tirada...`);
       try {
-        await rollPuzzle(message);
-        console.log(`[$p] ${message.author.tag} -> tirada completada.`);
+        await rollPuzzle(message, settings);
+        console.log(`[$p] ${message.author.tag} -> comando atendido.`);
       } catch (err) {
         console.error('[$p] Error durante la tirada:', err);
         await message.reply('❌ Ocurrió un error generando el puzzle. Revisa la consola del bot.');
@@ -37,7 +38,7 @@ module.exports = {
         const files = [];
         if (caught.image) {
           try {
-            const spriteRes = await fetch(caught.image);
+            const spriteRes = await fetch(caught.image, { signal: AbortSignal.timeout(5000) });
             if (spriteRes.ok) {
               const spriteBuf = Buffer.from(await spriteRes.arrayBuffer());
               files.push(new AttachmentBuilder(spriteBuf, { name: `${caught.name}.png` }));
@@ -53,6 +54,6 @@ module.exports = {
       return; // no contar el mensaje de captura como parte del contador de spawn
     }
 
-    await handleMessage(client, message);
+    await handleMessage(client, message, settings);
   },
 };

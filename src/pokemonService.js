@@ -1,65 +1,57 @@
-const fs   = require('fs');
-const path = require('path');
-
-const POKEMON_LIST = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '..', 'data', 'pokemon.json'), 'utf8')
-);
-
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const { fetchWithTimeout } = require('./network');
+const POKEMON_LIST = require('../data/pokemon.json');
+const pokemonById = new Map(POKEMON_LIST.map(p => [p.id, p]));
 const SPRITES_DIR = path.join(__dirname, '..', 'data', 'sprites');
+const pendingSprites = new Map();
 
-console.log(`[PokemonService] ${POKEMON_LIST.length} Pokémon cargados desde archivo local.`);
-
-/**
- * Obtiene el buffer del sprite:
- * 1. Lee desde disco local (data/sprites/<id>.png) → instantáneo
- * 2. Si no existe, descarga desde CDN y lo guarda en disco para la próxima vez
- */
-async function getSpriteBuffer(pokemon) {
+async function readOrDownloadSprite(pokemon) {
   const filePath = path.join(SPRITES_DIR, `${pokemon.id}.png`);
-
-  // Leer desde disco (< 1ms)
-  if (fs.existsSync(filePath)) {
-    return fs.readFileSync(filePath);
-  }
-
-  // Fallback: descargar y cachear en disco
   try {
-    const res = await fetch(pokemon.spriteUrl);
-    if (!res.ok) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
-    fs.mkdirSync(SPRITES_DIR, { recursive: true });
-    fs.writeFileSync(filePath, buf); // guardar para próxima vez
-    return buf;
-  } catch (_) {
-    return null;
+    const buffer = await fs.readFile(filePath);
+    if (buffer.length) return buffer;
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
   }
+  const response = await fetchWithTimeout(pokemon.spriteUrl);
+  if (!response.ok) throw new Error(`Sprite ${pokemon.id}: HTTP ${response.status}`);
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (!buffer.length) throw new Error(`Sprite ${pokemon.id} vacío.`);
+  await fs.mkdir(SPRITES_DIR, { recursive: true });
+  const temporary = `${filePath}.${process.pid}.tmp`;
+  await fs.writeFile(temporary, buffer);
+  await fs.rename(temporary, filePath);
+  return buffer;
 }
 
-/** Construye el objeto completo de un Pokémon con su spriteBuffer */
+function getSpriteBuffer(pokemon) {
+  if (!pendingSprites.has(pokemon.id)) {
+    pendingSprites.set(pokemon.id, readOrDownloadSprite(pokemon)
+      .finally(() => pendingSprites.delete(pokemon.id)));
+  }
+  return pendingSprites.get(pokemon.id);
+}
+
 async function fetchSinglePokemonWithSprite(id) {
-  const pokemon = POKEMON_LIST.find(p => p.id === id);
+  const pokemon = pokemonById.get(id);
   if (!pokemon) return null;
-
-  const spriteBuffer = await getSpriteBuffer(pokemon);
-  if (!spriteBuffer) return null;
-
-  return { id: pokemon.id, name: pokemon.name, image: pokemon.spriteUrl, spriteBuffer };
+  return { id: pokemon.id, name: pokemon.name, image: pokemon.spriteUrl,
+    spriteBuffer: await getSpriteBuffer(pokemon) };
 }
 
-/**
- * Obtiene `count` Pokémon distintos al azar con sus sprites.
- * Si los sprites están en disco → todo local, sin red.
- */
 async function getRandomPokemonBatch(count) {
-  const shuffled  = [...POKEMON_LIST].sort(() => Math.random() - 0.5);
-  const candidates = shuffled.slice(0, count + 5);
-
-  const results = await Promise.all(candidates.map(p => fetchSinglePokemonWithSprite(p.id)));
-  return results.filter(Boolean).slice(0, count);
+  const shuffled = [...POKEMON_LIST];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return Promise.all(shuffled.slice(0, count).map(p => fetchSinglePokemonWithSprite(p.id)));
 }
 
 function getRandomPokemon() {
-  return POKEMON_LIST[Math.floor(Math.random() * POKEMON_LIST.length)];
+  const pokemon = POKEMON_LIST[Math.floor(Math.random() * POKEMON_LIST.length)];
+  return { ...pokemon, image: pokemon.spriteUrl };
 }
 
 module.exports = { getRandomPokemon, getRandomPokemonBatch, fetchSinglePokemonWithSprite, POKEMON_LIST };

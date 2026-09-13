@@ -49,10 +49,10 @@ async function spawnPokemon(client, guildId, channelId) {
   }
 }
 
-async function handleMessage(client, message) {
+async function handleMessage(client, message, providedSettings) {
   if (message.author.bot || !message.guild) return;
 
-  const settings = await getGuildSettings(message.guild.id);
+  const settings = providedSettings || await getGuildSettings(message.guild.id);
   if (!settings.enabled || !settings.spawn_channel_id) return;
   if (settings.mode !== 'messages' && settings.mode !== 'both') return;
 
@@ -94,16 +94,20 @@ async function startTimeSpawner(client, guildId) {
   }
 
   st.timeTimer = setInterval(async () => {
-    const fresh = await getGuildSettings(guildId);
-    if ((fresh.mode === 'time' || fresh.mode === 'both') && fresh.enabled && fresh.spawn_channel_id) {
-      spawnPokemon(client, guildId, fresh.spawn_channel_id);
+    try {
+      const fresh = await getGuildSettings(guildId);
+      if ((fresh.mode === 'time' || fresh.mode === 'both') && fresh.enabled && fresh.spawn_channel_id) {
+        spawnPokemon(client, guildId, fresh.spawn_channel_id);
+      }
+    } catch (error) {
+      console.error('[Spawner] Error consultando configuración:', error.message);
     }
   }, settings.time_interval_seconds * 1000);
 }
 
 // Llamar esto cada vez que se cambie modo/intervalo/canal desde la config
 function restartTimeSpawner(client, guildId) {
-  startTimeSpawner(client, guildId);
+  return startTimeSpawner(client, guildId);
 }
 
 module.exports = { handleMessage, tryCatch, startTimeSpawner, restartTimeSpawner, getState };
