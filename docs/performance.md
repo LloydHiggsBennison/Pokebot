@@ -18,7 +18,8 @@ mutua global entre el precalentamiento y las tiradas. La secuencialidad existe s
 dentro de cada llamada. La documentación de Discord advierte que las operaciones de
 emojis de servidor tienen límites especiales por servidor, y las cuotas informadas
 pueden ser imprecisas. Esto explica un mecanismo compatible con las esperas reportadas
-cercanas a 30 minutos; **no se midió esa espera contra el bot real ni se obtuvieron sus logs**.
+cercanas a 30 minutos. En la revisión inicial no se tenía acceso al bot; la verificación
+real posterior se detalla al final de este informe.
 
 Otros hallazgos:
 
@@ -68,8 +69,9 @@ Cambios complementarios:
   límite de memoria e invalidación al cambiar `/pokeconfig`.
 - Reutilización de configuración entre handlers; se omite la lectura de cooldown si vale 0.
 - Una inserción por lote para los premios, con transacción local en SQLite.
-- Errores de base de datos propagados antes de anunciar éxito; HTTP abortado a 5 s por
-  petición de Supabase, sin los reintentos automáticos de lectura que prolongaban fallos.
+- Errores de base de datos propagados antes de anunciar éxito; HTTP acotado por petición
+  de Supabase, sin los reintentos automáticos de lectura que prolongaban fallos. El límite
+  inicial de 5 s se ajustó a 15 s configurables tras detectar un timeout real en Render.
 - Una tirada en curso por usuario y servidor. Se espera la finalización de ambas escrituras
   incluso si una falla, antes de liberar el bloqueo.
 - Índice compuesto de capturas, automático en SQLite y incluido en el esquema de Supabase.
@@ -84,7 +86,8 @@ Cambios complementarios:
 
 Se verificaron las opciones del cliente contra supabase-js 2.115.0 instalado y su
 [changelog](https://supabase.com/changelog). El SDK real se utiliza en pruebas con
-respuestas HTTP simuladas; no se accedió a un proyecto Supabase de producción.
+respuestas HTTP simuladas. Posteriormente se verificaron lecturas y premios en el
+proyecto real con el acceso proporcionado por el usuario.
 
 ## Conservación del grid
 
@@ -129,7 +132,8 @@ Para validarlo se añadieron los logs `roll_timing` y `discord_rate_limit`.
 
 ## Comprobaciones
 
-- `npm test`: **27 pruebas aprobadas, 0 fallos**. Sintaxis JavaScript y `git diff --check` correctos.
+- Versión inicial: **27 pruebas aprobadas**. La corrección de caché agrega tres pruebas
+  de actualización en segundo plano, reintentos limitados y respuestas concurrentes antiguas.
 - `npm ci`: dependencias necesarias para Supabase/Discord/Sharp instaladas.
 - Pruebas de compatibilidad del grid y resultado, bytes del sprite, concurrencia,
   cooldown, fallos de guardado, catálogo incompleto, límite de capacidad, reintentos de
@@ -143,7 +147,8 @@ Para validarlo se añadieron los logs `roll_timing` y `discord_rate_limit`.
   restricciones del entorno Windows. Esto no afecta al camino de producción con Supabase.
 - Timeout verificado con un servidor HTTP local real que deja el cuerpo sin terminar.
 - Preparación REST probada con las clases reales de discord.js y transporte simulado.
-- No se modificaron tablas remotas, no se conectó a Discord ni se desplegó en Render.
+- La revisión inicial fue local. Las lecturas posteriores en Discord/Supabase verificaron
+  las tiradas enviadas por el usuario al bot desplegado; no se modificó el esquema remoto.
 
 ## Aplicación y validación en producción
 
@@ -170,3 +175,30 @@ otra; ahora se detecta y no se anuncia éxito, pero esto no equivale a una trans
 atómica entre ambas tablas. El bloqueo es por proceso; no ejecutar varias réplicas del
 mismo bot. Tampoco se implementa reenvío durable si Discord falla después del guardado.
 Estos límites deben considerarse al escalar o al exigir entrega exactamente una vez.
+
+## Verificación real del 13 de septiembre de 2026
+
+Se comprobó el commit `e73f2a6` en ejecución con comandos enviados por el usuario.
+El catálogo remoto contiene 1025 Pokémon y el badge; el bot tiene permisos de lectura
+ y envío en el canal seleccionado. No se inició una segunda sesión del Gateway.
+
+El historial confirma una tirada antigua de unos 31 minutos y otra de unos 57 minutos.
+En la primera prueba de la nueva versión hubo un error a los **5236 ms**. El log de
+Render lo sitúa en `loadGuildSettings`, abortado por el límite inicial de cinco segundos.
+Las siguientes **10 tiradas fueron correctas**, con estos tiempos de aparición del grid:
+955, 310, 313, 292, 134, 249, 247, 1524, 278 y 229 ms. Mediana: **292 ms**;
+mínimo: **134 ms**; máximo: **1524 ms**. El resultado completo llegó entre 392 y 1837 ms.
+Se contrastaron los cinco renglones, sus quince emojis con el catálogo de aplicación,
+los indicadores, el badge y la persistencia de los **11 premios** en Supabase.
+
+Para reducir el riesgo de repetir el fallo inicial se cambia el límite de Supabase
+por defecto a 15 segundos (`SUPABASE_TIMEOUT_MS`) y la configuración expirada se
+actualiza en segundo plano. Se utiliza solo configuración conocida, hasta cinco minutos
+desde la última lectura correcta; no se inventan valores ante errores. Los reintentos
+en segundo plano tienen una pausa mínima de diez segundos. Los cambios de `/pokeconfig`
+invalidan las lecturas pendientes para evitar que una respuesta antigua los sobrescriba.
+
+Estas mediciones corresponden al commit anterior a ese ajuste adicional. Sus tres
+regresiones nuevas se verifican localmente; la primera conexión lenta desde Render
+requiere validación posterior al nuevo despliegue. No se promete una latencia máxima
+independiente de Discord, Supabase o de la suspensión del servicio.

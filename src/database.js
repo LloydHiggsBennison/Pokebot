@@ -4,6 +4,9 @@ const { fetchWithTimeout } = require('./network');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const configuredTimeout = Number(process.env.SUPABASE_TIMEOUT_MS || 15000);
+const supabaseTimeoutMs = Number.isFinite(configuredTimeout)
+  ? Math.min(60000, Math.max(1000, configuredTimeout)) : 15000;
 
 let useSupabase = false;
 let supabase = null;
@@ -14,7 +17,7 @@ if (supabaseUrl && supabaseKey) {
   supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false, autoRefreshToken: false },
     db: { retry: false },
-    global: { fetch: (url, options) => fetchWithTimeout(url, options, 5000) },
+    global: { fetch: (url, options) => fetchWithTimeout(url, options, supabaseTimeoutMs) },
   });
   console.log('⚡ Base de datos conectada a Supabase (PostgreSQL)');
 } else {
@@ -61,21 +64,43 @@ if (supabaseUrl && supabaseKey) {
 const settingsCache = new Map();
 const pendingSettings = new Map();
 const SETTINGS_TTL_MS = 30000;
+const SETTINGS_MAX_AGE_MS = 300000;
+const SETTINGS_RETRY_MS = 10000;
 const SETTINGS_CACHE_LIMIT = 10000;
 
 function cacheSettings(guildId, value) {
   if (settingsCache.size >= SETTINGS_CACHE_LIMIT) settingsCache.delete(settingsCache.keys().next().value);
-  settingsCache.set(guildId, { value: Object.freeze({ ...value }), expires: Date.now() + SETTINGS_TTL_MS });
+  settingsCache.set(guildId, { value: Object.freeze({ ...value }),
+    expires: Date.now() + SETTINGS_TTL_MS, usableUntil: Date.now() + SETTINGS_MAX_AGE_MS,
+    retryAt: 0 });
 }
 
 async function getGuildSettings(guildId) {
   const cached = settingsCache.get(guildId);
   if (cached && cached.expires > Date.now()) return cached.value;
+  if (cached && cached.usableUntil > Date.now()) {
+    // Keep the last known settings usable while a slow connection refreshes them.
+    // Never invent defaults on a failed read, or keep stale settings indefinitely.
+    if (!pendingSettings.has(guildId) && cached.retryAt <= Date.now()) {
+      refreshGuildSettings(guildId).catch(error => {
+        cached.retryAt = Date.now() + SETTINGS_RETRY_MS;
+        console.warn('[Settings] No se pudo actualizar la configuración en segundo plano:', error.message);
+      });
+    }
+    return cached.value;
+  }
+  return refreshGuildSettings(guildId);
+}
+
+function refreshGuildSettings(guildId) {
   if (pendingSettings.has(guildId)) return pendingSettings.get(guildId);
   const pending = loadGuildSettings(guildId).then(value => {
-    cacheSettings(guildId, value);
-    return settingsCache.get(guildId).value;
-  }).finally(() => pendingSettings.delete(guildId));
+    // A config write can invalidate this request while it is in flight.
+    if (pendingSettings.get(guildId) === pending) cacheSettings(guildId, value);
+    return Object.freeze({ ...value });
+  }).finally(() => {
+    if (pendingSettings.get(guildId) === pending) pendingSettings.delete(guildId);
+  });
   pendingSettings.set(guildId, pending);
   return pending;
 }
@@ -151,6 +176,7 @@ async function updateGuildSettings(guildId, fields) {
     }
   } finally {
     settingsCache.delete(guildId);
+    pendingSettings.delete(guildId);
   }
 }
 

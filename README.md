@@ -114,9 +114,15 @@ es local al proceso, no un bloqueo distribuido entre réplicas.
 | `/pokeconfig activar` | Activa/pausa apariciones salvajes |
 | `/pokeconfig ver` | Consulta configuración |
 
-La configuración se guarda en Supabase/SQLite y se cachea hasta 30 segundos. Los cambios
-por `/pokeconfig` invalidan inmediatamente la caché; cambios directos en la base pueden
-necesitar hasta 30 segundos. El cooldown se consulta cuando está habilitado y se persiste
+La configuración se guarda en Supabase/SQLite. La caché es fresca durante 30 segundos;
+después se actualiza en segundo plano al usarla, sin bloquear la tirada. Si esa consulta
+falla, se conserva la última configuración conocida durante un máximo de cinco minutos,
+con diez segundos entre reintentos. Después se exige una lectura correcta. Los cambios
+por `/pokeconfig` invalidan inmediatamente la caché y una respuesta antigua no puede
+sobrescribirlos. Cambios directos en la base se ven al completar la actualización.
+`SUPABASE_TIMEOUT_MS` permite ajustar el límite por petición: 15000 ms por defecto,
+acotado entre 1000 y 60000. No se reintentan automáticamente escrituras de premios.
+El cooldown se consulta cuando está habilitado y se persiste
 en cada tirada. Los premios se guardan antes de anunciar el resultado.
 
 Proyecto de fans, no afiliado con Nintendo, Game Freak ni The Pokémon Company.

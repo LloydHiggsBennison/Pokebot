@@ -9,8 +9,10 @@ function supabaseFixture() {
   const captures = [];
   const rolls = new Map();
   let fail = false;
+  let now = Date.now();
+  let holdRead = null;
   const fetchWithTimeout = async (url, options, timeout) => {
-    assert.equal(timeout, 5000);
+    assert.equal(timeout, 15000);
     const parsed = new URL(url);
     const table = parsed.pathname.split('/').pop();
     const method = options.method || 'GET';
@@ -19,6 +21,13 @@ function supabaseFixture() {
     const name = parsed.searchParams.get('pokemon_name')?.replace('eq.', '');
     const body = options.body ? JSON.parse(options.body) : null;
     requests.push({ table, method, body });
+    if (holdRead && table === 'guild_settings' && method === 'GET') {
+      const snapshot = settings.has(g) ? [{ ...settings.get(g) }] : [];
+      const wait = holdRead;
+      holdRead = null;
+      await wait;
+      return new Response(JSON.stringify(snapshot), { status: 200 });
+    }
     if (fail) return new Response(JSON.stringify({ code: 'XX000', message: 'test database failure', details: '', hint: '' }), { status: 503 });
     let data = null;
     if (table === 'guild_settings') {
@@ -40,9 +49,10 @@ function supabaseFixture() {
   const db = loadModule('src/database.js', {
     '@supabase/supabase-js': { createClient(url, key, options) { clientOptions = options; return createClient(url, key, options); } },
     './network': { fetchWithTimeout },
-  }, { process: { env: { SUPABASE_URL: 'https://database.test', SUPABASE_KEY: 'test-key' } } });
+  }, { process: { env: { SUPABASE_URL: 'https://database.test', SUPABASE_KEY: 'test-key' } }, Date: { now: () => now } });
   assert.equal(clientOptions.db.retry, false);
-  return { db, requests, captures, settings, fail(value) { fail = value; } };
+  return { db, requests, captures, settings, fail(value) { fail = value; },
+    advance(ms) { now += ms; }, hold(promise) { holdRead = promise; } };
 }
 
 test('real Supabase SDK: settings reads coalesce, stay cached and invalidate on config change', async () => {
@@ -124,4 +134,52 @@ test('SQLite queries execute on a real in-memory SQLite engine (node:sqlite adap
     const plan = connection.prepare('EXPLAIN QUERY PLAN SELECT id FROM captures WHERE guild_id = ? AND user_id = ? AND pokemon_name = ? LIMIT 1').all('g', 'u', 'pikachu');
     assert.match(plan[0].detail, /captures_owner_pokemon_idx/);
   } finally { connection.close(); }
+});
+
+test('stale settings return immediately while one background read is pending', async () => {
+  const fixture = supabaseFixture();
+  await fixture.db.getGuildSettings('g');
+  fixture.advance(31000);
+  let release;
+  fixture.hold(new Promise(resolve => { release = resolve; }));
+  const rows = await Promise.all(Array.from({ length: 100 }, () => fixture.db.getGuildSettings('g')));
+  assert.ok(rows.every(row => row.catch_command === '$p'));
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(fixture.requests.length, 3);
+  release();
+  await new Promise(resolve => setImmediate(resolve));
+  await fixture.db.getGuildSettings('g');
+  assert.equal(fixture.requests.length, 3);
+});
+
+test('failed background reads back off and settings older than five minutes fail closed', async () => {
+  const fixture = supabaseFixture();
+  await fixture.db.getGuildSettings('g');
+  fixture.advance(31000);
+  fixture.fail(true);
+  assert.equal((await fixture.db.getGuildSettings('g')).catch_command, '$p');
+  await new Promise(resolve => setImmediate(resolve));
+  for (let i = 0; i < 100; i++) await fixture.db.getGuildSettings('g');
+  assert.equal(fixture.requests.length, 3);
+  fixture.advance(10001);
+  await fixture.db.getGuildSettings('g');
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(fixture.requests.length, 4);
+  fixture.advance(300000);
+  await assert.rejects(fixture.db.getGuildSettings('g'), error => error.message === 'test database failure');
+});
+
+test('a late background response cannot overwrite an explicit config update', async () => {
+  const fixture = supabaseFixture();
+  await fixture.db.getGuildSettings('g');
+  fixture.advance(31000);
+  let release;
+  fixture.hold(new Promise(resolve => { release = resolve; }));
+  await fixture.db.getGuildSettings('g');
+  await new Promise(resolve => setImmediate(resolve));
+  await fixture.db.updateGuildSettings('g', { catch_command: '!new' });
+  assert.equal((await fixture.db.getGuildSettings('g')).catch_command, '!new');
+  release();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal((await fixture.db.getGuildSettings('g')).catch_command, '!new');
 });
