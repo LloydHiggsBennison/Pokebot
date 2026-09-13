@@ -1,4 +1,5 @@
 const test = require('node:test');
+const { withLanguage } = require('../src/i18n');
 const assert = require('node:assert/strict');
 const sharp = require('sharp');
 const { loadModule, fakeClient, fakeMessage, fakeDatabase, fixedRandom, POKEMON_LIST } = require('./helpers');
@@ -11,6 +12,18 @@ function rollModule(database, emojis, random = Math, baseline = false) {
     './badgeManager': { getNewBadgeEmoji: guild => emojis.getPreparedEmoji(guild.client, 'pk_new') },
   }, { Math: random });
 }
+
+test('English roll translates its result while keeping the exact Spanish grid',async()=>{
+  const grids=[];
+  for(const lang of ['es','en']){
+    const {client}=fakeClient();const emojis=loadModule('src/emojiManager.js');await emojis.initializeEmojis(client);
+    const msg=fakeMessage(client);
+    await withLanguage(lang,()=>rollModule(fakeDatabase(),emojis,fixedRandom(0.85)).rollPuzzle(msg));
+    grids.push(msg.sent[0][1]);
+    assert.match(msg.sent[1][1],lang==='es'?/Has ganado 2 Pokémon/:/You won 2 Pokémon/);
+  }
+  assert.equal(grids[0],grids[1]);
+});
 
 for (const [outcome, winnerCount] of [[0.05, 0], [0.5, 1], [0.85, 2], [0.98, 3]]) {
   for (const alreadyOwned of [false, true]) {
@@ -116,3 +129,4 @@ test('image bytes equal original sharp processing', async () => {
   const after = loadModule('src/emojiManager.js');
   assert.deepEqual(await after.processPokemonSprite(sprite), originalBytes);
 });
+

@@ -2,6 +2,7 @@ require('dotenv').config();
 const { startHealthServer } = require('./healthServer');
 const fs = require('fs');
 const path = require('path');
+const { withLanguage, languageFor, initializeLanguages } = require('./i18n');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 
 const client = new Client({
@@ -32,7 +33,7 @@ const eventsPath = path.join(__dirname, 'events');
 for (const file of fs.readdirSync(eventsPath).filter((f) => f.endsWith('.js'))) {
   const event = require(path.join(eventsPath, file));
   const listener = (...args) => Promise.resolve()
-    .then(() => event.execute(...args, client))
+    .then(() => withLanguage(languageFor(args[0]?.author?.id || args[0]?.user?.id, args[0]?.guildId || args[0]?.guild?.id), () => event.execute(...args, client)))
     .catch(error => console.error(`[Evento ${event.name}]`, error));
   if (event.once) {
     client.once(event.name, listener);
@@ -41,7 +42,9 @@ for (const file of fs.readdirSync(eventsPath).filter((f) => f.endsWith('.js'))) 
   }
 }
 
-client.login(process.env.DISCORD_TOKEN).catch(error => {
+initializeLanguages().catch(error => console.error('[Idiomas]',error.message))
+  .then(() => client.login(process.env.DISCORD_TOKEN)).catch(error => {
   console.error('[Login]', error.message);
   process.exit(1);
 });
+

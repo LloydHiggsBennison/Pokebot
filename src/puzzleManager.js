@@ -1,3 +1,4 @@
+const { t } = require('./i18n');
 const { prepareRollEmojis, getEmojiStatus } = require('./emojiManager');
 const { takeFromPool } = require('./pokemonPool');
 const { getGuildSettings, getLastRoll, setLastRoll, addCaptures, hasCapture } = require('./database');
@@ -51,14 +52,14 @@ async function rollPuzzle(message, settings) {
   const status = getEmojiStatus(message.guild.client);
   if (status.status !== 'ready') {
     const text = status.status === 'error'
-      ? '❌ No se pudo preparar el catálogo de Pokémon. El administrador debe revisar la consola y reiniciar el bot.'
-      : `⏳ Preparando los emojis de Pokémon (${status.loaded}/${status.total}). Vuelve a tirar cuando termine la preparación inicial.`;
+      ? t('❌ No se pudo preparar el catálogo de Pokémon. El administrador debe revisar la consola y reiniciar el bot.', "❌ Could not prepare the Pokémon catalog. An administrator must check the logs and restart the bot.")
+      : t(`⏳ Preparando los emojis de Pokémon (${status.loaded}/${status.total}). Vuelve a tirar cuando termine la preparación inicial.`, `⏳ Preparing Pokémon emojis (${status.loaded}/${status.total}). Roll again when setup finishes.`);
     await message.reply(text);
     return;
   }
   const key = `${message.guild.id}:${message.author.id}`;
   if (activeRolls.has(key)) {
-    await message.reply('⏳ Tu tirada anterior todavía está en curso.');
+    await message.reply(t('⏳ Tu tirada anterior todavía está en curso.', "⏳ Your previous roll is still running."));
     return;
   }
   activeRolls.add(key);
@@ -83,7 +84,7 @@ async function executeRoll(message, providedSettings, started) {
 
   if (cooldownMs > 0 && now - lastRoll < cooldownMs) {
     const remaining = formatCooldown(cooldownMs - (now - lastRoll));
-    await message.reply(`⏳ Espera **${remaining}** para volver a tirar.`);
+    await message.reply(t(`⏳ Espera **${remaining}** para volver a tirar.`, `⏳ Wait **${remaining}** before rolling again.`));
     return;
   }
 
@@ -153,19 +154,19 @@ async function executeRoll(message, providedSettings, started) {
   // 6. Texto del resultado con badge condicional
   let resultText;
   if (winners.length === 0) {
-    resultText = `${username}: No has ganado ningún Pokémon.`;
+    resultText = t(`${username}: No has ganado ningún Pokémon.`, `${username}: You did not win any Pokémon.`);
   } else if (winners.length === 1) {
     const w = winners[0];
     const e = emojiMap.get(w.id) || '';
     const b = isNewMap.get(w.id) ? `${badge} ` : '';
-    resultText = `${username}: ${b}${e} Has ganado un **${capitalize(w.name)}**`;
+    resultText = t(`${username}: ${b}${e} Has ganado un **${capitalize(w.name)}**`, `${username}: ${b}${e} You won a **${capitalize(w.name)}**`);
   } else {
     const names = winners.map(w => {
       const e = emojiMap.get(w.id) || '';
       const b = isNewMap.get(w.id) ? `${badge} ` : '';
       return `${b}${e} **${capitalize(w.name)}**`;
     }).join(', ');
-    resultText = `${username}: Has ganado ${winners.length} Pokémon: ${names}`;
+    resultText = t(`${username}: Has ganado ${winners.length} Pokémon: ${names}`, `${username}: You won ${winners.length} Pokémon: ${names}`);
   }
 
   // 6. Primero el grid de emojis (reply), luego el resultado debajo (send)
@@ -181,3 +182,4 @@ async function executeRoll(message, providedSettings, started) {
 }
 
 module.exports = { rollPuzzle };
+

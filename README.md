@@ -161,3 +161,55 @@ copias normales. Al confirmar, la base de datos conserva la captura normal más 
 consume exactamente cuatro y registra una captura shiny. Las shiny no cuentan como
 ingredientes para otra fusión. El selector expira en cinco minutos y rechaza clics de
 otros usuarios, servidores o mensajes.
+
+## Capturas salvajes, Pokécoins e idiomas
+
+Antes de desplegar esta versión, ejecuta `supabase_migration_wild_rewards.sql` en
+el SQL Editor, también si estás creando una instalación nueva con el esquema base.
+Requiere la clave **service_role** en el servidor del bot para las nuevas tablas
+protegidas por RLS; no se concede acceso público a saldos ni preferencias.
+SQLite añade las columnas/tablas automáticamente. Las capturas anteriores se conservan.
+
+Captura con **@Pokebot catch absol** (mención real al bot y nombre del Pokémon).
+El alias configurado, por ejemplo `$p absol`, también funciona. Solo se acepta en
+el canal donde apareció el Pokémon. Un ejemplo de respuesta es:
+
+> ¡Felicidades **@Sekai**! ¡Atrapaste un Absol de nivel 10 (65.59%)! Añadido a tu Pokédex. ¡Recibiste 35 Pokécoins!
+
+Cada aparición genera un nivel entre 1 y 100 y seis IV entre 0 y 31.
+El porcentaje es la suma de IV dividida entre 186, redondeada a dos decimales.
+Estos valores se guardan con la captura; no son estadísticas inventadas al responder.
+
+| Categoría | Pokécoins |
+|---|---:|
+| Común | 10 |
+| Poco común | 20 |
+| Raro (incluye Absol) | 35 |
+| Legendario | 150 |
+| Mítico | 300 |
+
+Las categorías son reglas del bot: primero se comprueban los indicadores mítico y
+legendario; para el resto, tasa de captura ≤45 es raro, ≤120 es poco común y >120
+es común. No cambia la distribución de apariciones existente. Los metadatos de las
+1025 especies se guardan en `data/species-rarity.json`, derivados del
+[CSV de especies de PokéAPI](https://github.com/PokeAPI/pokeapi/blob/master/data/v2/csv/pokemon_species.csv)
+(2026-09-13). No se consulta PokéAPI durante una captura.
+
+`$pokecoins` (también `$saldo` / `$balance`) consulta tu saldo en ese servidor.
+La captura, el registro del premio y el incremento del saldo se guardan juntos.
+El identificador único de aparición impide duplicados al repetir un intento cuyo
+resultado fue incierto. Tras un error de base, el primer usuario puede repetir su
+comando; la aparición queda reservada hasta confirmar el resultado.
+Ejecuta una sola instancia del bot, pues el estado de las apariciones reside en memoria.
+
+`$idioma` o `$language` abre el selector **Español / English**. La preferencia personal
+se guarda y se aplica a tiradas, Pokédex, fusiones, capturas, saldos y respuestas de
+configuración. No requiere consultas de idioma en cada comando: se cargan al arrancar.
+`$idioma servidor` / `$language server` requiere **Administrar servidor** y cambia el
+idioma de anuncios públicos y el predeterminado para quienes aún no eligieron uno.
+Español es el valor inicial. Reinicia el bot después de aplicar la migración o de
+editar idiomas directamente en la base.
+
+Los nombres y descripciones del menú slash se traducen según el idioma de Discord,
+mediante sus localizaciones nativas; `npm run deploy` actualiza ese menú.
+

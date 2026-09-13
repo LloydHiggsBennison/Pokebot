@@ -1,7 +1,7 @@
-const { AttachmentBuilder } = require('discord.js');
-const { handleMessage, tryCatch } = require('../spawnManager');
+const { handleMessage } = require('../spawnManager');
 const { rollPuzzle } = require('../puzzleManager');
-const { getGuildSettings, addCapture } = require('../database');
+const { getGuildSettings } = require('../database');
+const { t } = require('../i18n');
 
 module.exports = {
   name: 'messageCreate',
@@ -9,6 +9,17 @@ module.exports = {
     if (message.author.bot || !message.guild) return;
 
     const content = message.content.trim();
+    if (/^\$(idioma|language)(\s+(servidor|server))?$/i.test(content)) {
+      return require('../languageManager').showLanguage(message, /\s/.test(content));
+    }
+    if (/^\$(pokecoins|saldo|balance)$/i.test(content)) {
+      try {
+        const balance=await require('../economy').getBalance(message.guild.id,message.author.id);
+        return message.reply(t(`💰 Tienes **${balance} Pokécoins**.`,`💰 You have **${balance} Pokécoins**.`));
+      } catch(error) { return message.reply(t('No se pudo consultar tu saldo.','Could not load your balance.')); }
+    }
+    const mention=content.match(/^<@!?(\d+)>\s+catch(?:\s+(.*))?$/i);
+    if(mention && mention[1]===client.user?.id) return require('../catchManager').catchWild(message,mention[2] || '');
     if (content.toLowerCase() === '$pokedex') {
       await require('../pokedexManager').showPokedex(message);
       return;
@@ -29,7 +40,7 @@ module.exports = {
         console.log(`[$p] ${message.author.tag} -> comando atendido.`);
       } catch (err) {
         console.error('[$p] Error durante la tirada:', err);
-        await message.reply('❌ Ocurrió un error generando el puzzle. Revisa la consola del bot.');
+        await message.reply(t('❌ Ocurrió un error generando el puzzle. Revisa la consola del bot.', "❌ An error occurred generating the puzzle. Check the bot logs."));
       }
       return;
     }
@@ -37,31 +48,11 @@ module.exports = {
     // "<catchCmd> <nombre>" -> intento de atrapar el spawn salvaje activo del canal
     if (catchCmd && content.toLowerCase().startsWith(`${catchCmd.toLowerCase()} `)) {
       const guess = content.slice(catchCmd.length).trim();
-      const caught = tryCatch(message.guild.id, guess);
-
-      if (caught) {
-        await addCapture(message.guild.id, message.author.id, caught.name, caught.id);
-        const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
-
-        const files = [];
-        if (caught.image) {
-          try {
-            const spriteRes = await fetch(caught.image, { signal: AbortSignal.timeout(5000) });
-            if (spriteRes.ok) {
-              const spriteBuf = Buffer.from(await spriteRes.arrayBuffer());
-              files.push(new AttachmentBuilder(spriteBuf, { name: `${caught.name}.png` }));
-            }
-          } catch (e) {}
-        }
-
-        await message.reply({
-          content: `¡Felicidades ${message.author}! Atrapaste a **${capitalize(caught.name)}**.`,
-          files,
-        });
-      }
+      await require('../catchManager').catchWild(message, guess);
       return; // no contar el mensaje de captura como parte del contador de spawn
     }
 
     await handleMessage(client, message, settings);
   },
 };
+

@@ -349,6 +349,7 @@ async function hasCapture(guildId, userId, pokemonName) {
 }
 
 module.exports = {
+  storage: { supabase, sqlite: db },
   getGuildSettings,
   updateGuildSettings,
   addCapture,
@@ -361,3 +362,4 @@ module.exports = {
   getLastRoll,
   setLastRoll,
 };
+

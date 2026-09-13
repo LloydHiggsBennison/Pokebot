@@ -1,0 +1,5128 @@
+{
+  "1": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "2": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "3": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "4": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "5": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "6": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "7": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "8": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "9": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "10": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "11": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "12": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "13": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "14": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "15": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "16": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "17": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "18": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "19": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "20": {
+    "captureRate": 127,
+    "legendary": false,
+    "mythical": false
+  },
+  "21": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "22": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "23": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "24": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "25": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "26": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "27": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "28": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "29": {
+    "captureRate": 235,
+    "legendary": false,
+    "mythical": false
+  },
+  "30": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "31": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "32": {
+    "captureRate": 235,
+    "legendary": false,
+    "mythical": false
+  },
+  "33": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "34": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "35": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "36": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "37": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "38": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "39": {
+    "captureRate": 170,
+    "legendary": false,
+    "mythical": false
+  },
+  "40": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "41": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "42": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "43": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "44": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "45": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "46": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "47": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "48": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "49": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "50": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "51": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "52": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "53": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "54": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "55": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "56": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "57": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "58": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "59": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "60": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "61": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "62": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "63": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "64": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "65": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "66": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "67": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "68": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "69": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "70": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "71": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "72": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "73": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "74": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "75": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "76": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "77": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "78": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "79": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "80": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "81": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "82": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "83": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "84": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "85": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "86": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "87": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "88": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "89": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "90": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "91": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "92": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "93": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "94": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "95": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "96": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "97": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "98": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "99": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "100": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "101": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "102": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "103": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "104": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "105": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "106": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "107": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "108": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "109": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "110": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "111": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "112": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "113": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "114": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "115": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "116": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "117": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "118": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "119": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "120": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "121": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "122": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "123": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "124": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "125": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "126": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "127": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "128": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "129": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "130": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "131": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "132": {
+    "captureRate": 35,
+    "legendary": false,
+    "mythical": false
+  },
+  "133": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "134": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "135": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "136": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "137": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "138": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "139": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "140": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "141": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "142": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "143": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "144": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "145": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "146": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "147": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "148": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "149": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "150": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "151": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": true
+  },
+  "152": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "153": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "154": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "155": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "156": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "157": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "158": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "159": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "160": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "161": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "162": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "163": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "164": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "165": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "166": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "167": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "168": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "169": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "170": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "171": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "172": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "173": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "174": {
+    "captureRate": 170,
+    "legendary": false,
+    "mythical": false
+  },
+  "175": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "176": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "177": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "178": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "179": {
+    "captureRate": 235,
+    "legendary": false,
+    "mythical": false
+  },
+  "180": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "181": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "182": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "183": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "184": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "185": {
+    "captureRate": 65,
+    "legendary": false,
+    "mythical": false
+  },
+  "186": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "187": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "188": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "189": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "190": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "191": {
+    "captureRate": 235,
+    "legendary": false,
+    "mythical": false
+  },
+  "192": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "193": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "194": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "195": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "196": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "197": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "198": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "199": {
+    "captureRate": 70,
+    "legendary": false,
+    "mythical": false
+  },
+  "200": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "201": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "202": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "203": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "204": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "205": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "206": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "207": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "208": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "209": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "210": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "211": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "212": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "213": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "214": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "215": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "216": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "217": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "218": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "219": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "220": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "221": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "222": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "223": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "224": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "225": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "226": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "227": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "228": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "229": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "230": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "231": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "232": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "233": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "234": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "235": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "236": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "237": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "238": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "239": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "240": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "241": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "242": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "243": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "244": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "245": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "246": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "247": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "248": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "249": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "250": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "251": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": true
+  },
+  "252": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "253": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "254": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "255": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "256": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "257": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "258": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "259": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "260": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "261": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "262": {
+    "captureRate": 127,
+    "legendary": false,
+    "mythical": false
+  },
+  "263": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "264": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "265": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "266": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "267": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "268": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "269": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "270": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "271": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "272": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "273": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "274": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "275": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "276": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "277": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "278": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "279": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "280": {
+    "captureRate": 235,
+    "legendary": false,
+    "mythical": false
+  },
+  "281": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "282": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "283": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "284": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "285": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "286": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "287": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "288": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "289": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "290": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "291": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "292": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "293": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "294": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "295": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "296": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "297": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "298": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "299": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "300": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "301": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "302": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "303": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "304": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "305": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "306": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "307": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "308": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "309": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "310": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "311": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "312": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "313": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "314": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "315": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "316": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "317": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "318": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "319": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "320": {
+    "captureRate": 125,
+    "legendary": false,
+    "mythical": false
+  },
+  "321": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "322": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "323": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "324": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "325": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "326": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "327": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "328": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "329": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "330": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "331": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "332": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "333": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "334": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "335": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "336": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "337": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "338": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "339": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "340": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "341": {
+    "captureRate": 205,
+    "legendary": false,
+    "mythical": false
+  },
+  "342": {
+    "captureRate": 155,
+    "legendary": false,
+    "mythical": false
+  },
+  "343": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "344": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "345": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "346": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "347": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "348": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "349": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "350": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "351": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "352": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "353": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "354": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "355": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "356": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "357": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "358": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "359": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "360": {
+    "captureRate": 125,
+    "legendary": false,
+    "mythical": false
+  },
+  "361": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "362": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "363": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "364": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "365": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "366": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "367": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "368": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "369": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "370": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "371": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "372": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "373": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "374": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": false
+  },
+  "375": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": false
+  },
+  "376": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": false
+  },
+  "377": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "378": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "379": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "380": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "381": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "382": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "383": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "384": {
+    "captureRate": 45,
+    "legendary": true,
+    "mythical": false
+  },
+  "385": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "386": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "387": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "388": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "389": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "390": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "391": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "392": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "393": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "394": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "395": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "396": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "397": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "398": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "399": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "400": {
+    "captureRate": 127,
+    "legendary": false,
+    "mythical": false
+  },
+  "401": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "402": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "403": {
+    "captureRate": 235,
+    "legendary": false,
+    "mythical": false
+  },
+  "404": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "405": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "406": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "407": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "408": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "409": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "410": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "411": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "412": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "413": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "414": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "415": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "416": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "417": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "418": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "419": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "420": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "421": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "422": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "423": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "424": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "425": {
+    "captureRate": 125,
+    "legendary": false,
+    "mythical": false
+  },
+  "426": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "427": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "428": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "429": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "430": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "431": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "432": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "433": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "434": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "435": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "436": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "437": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "438": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "439": {
+    "captureRate": 145,
+    "legendary": false,
+    "mythical": false
+  },
+  "440": {
+    "captureRate": 130,
+    "legendary": false,
+    "mythical": false
+  },
+  "441": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "442": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "443": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "444": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "445": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "446": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "447": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "448": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "449": {
+    "captureRate": 140,
+    "legendary": false,
+    "mythical": false
+  },
+  "450": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "451": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "452": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "453": {
+    "captureRate": 140,
+    "legendary": false,
+    "mythical": false
+  },
+  "454": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "455": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "456": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "457": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "458": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "459": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "460": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "461": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "462": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "463": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "464": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "465": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "466": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "467": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "468": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "469": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "470": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "471": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "472": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "473": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "474": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "475": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "476": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "477": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "478": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "479": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "480": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "481": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "482": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "483": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "484": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "485": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "486": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "487": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "488": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "489": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": true
+  },
+  "490": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "491": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "492": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": true
+  },
+  "493": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "494": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "495": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "496": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "497": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "498": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "499": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "500": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "501": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "502": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "503": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "504": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "505": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "506": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "507": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "508": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "509": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "510": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "511": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "512": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "513": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "514": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "515": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "516": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "517": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "518": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "519": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "520": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "521": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "522": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "523": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "524": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "525": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "526": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "527": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "528": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "529": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "530": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "531": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "532": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "533": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "534": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "535": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "536": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "537": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "538": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "539": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "540": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "541": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "542": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "543": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "544": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "545": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "546": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "547": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "548": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "549": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "550": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "551": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "552": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "553": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "554": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "555": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "556": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "557": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "558": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "559": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "560": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "561": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "562": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "563": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "564": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "565": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "566": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "567": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "568": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "569": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "570": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "571": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "572": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "573": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "574": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "575": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "576": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "577": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "578": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "579": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "580": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "581": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "582": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "583": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "584": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "585": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "586": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "587": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "588": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "589": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "590": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "591": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "592": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "593": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "594": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "595": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "596": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "597": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "598": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "599": {
+    "captureRate": 130,
+    "legendary": false,
+    "mythical": false
+  },
+  "600": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "601": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "602": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "603": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "604": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "605": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "606": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "607": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "608": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "609": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "610": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "611": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "612": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "613": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "614": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "615": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "616": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "617": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "618": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "619": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "620": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "621": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "622": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "623": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "624": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "625": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "626": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "627": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "628": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "629": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "630": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "631": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "632": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "633": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "634": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "635": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "636": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "637": {
+    "captureRate": 15,
+    "legendary": false,
+    "mythical": false
+  },
+  "638": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "639": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "640": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "641": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "642": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "643": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "644": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "645": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "646": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "647": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "648": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "649": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "650": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "651": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "652": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "653": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "654": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "655": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "656": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "657": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "658": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "659": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "660": {
+    "captureRate": 127,
+    "legendary": false,
+    "mythical": false
+  },
+  "661": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "662": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "663": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "664": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "665": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "666": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "667": {
+    "captureRate": 220,
+    "legendary": false,
+    "mythical": false
+  },
+  "668": {
+    "captureRate": 65,
+    "legendary": false,
+    "mythical": false
+  },
+  "669": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "670": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "671": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "672": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "673": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "674": {
+    "captureRate": 220,
+    "legendary": false,
+    "mythical": false
+  },
+  "675": {
+    "captureRate": 65,
+    "legendary": false,
+    "mythical": false
+  },
+  "676": {
+    "captureRate": 160,
+    "legendary": false,
+    "mythical": false
+  },
+  "677": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "678": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "679": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "680": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "681": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "682": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "683": {
+    "captureRate": 140,
+    "legendary": false,
+    "mythical": false
+  },
+  "684": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "685": {
+    "captureRate": 140,
+    "legendary": false,
+    "mythical": false
+  },
+  "686": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "687": {
+    "captureRate": 80,
+    "legendary": false,
+    "mythical": false
+  },
+  "688": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "689": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "690": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "691": {
+    "captureRate": 55,
+    "legendary": false,
+    "mythical": false
+  },
+  "692": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "693": {
+    "captureRate": 55,
+    "legendary": false,
+    "mythical": false
+  },
+  "694": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "695": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "696": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "697": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "698": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "699": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "700": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "701": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "702": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "703": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "704": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "705": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "706": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "707": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "708": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "709": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "710": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "711": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "712": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "713": {
+    "captureRate": 55,
+    "legendary": false,
+    "mythical": false
+  },
+  "714": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "715": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "716": {
+    "captureRate": 45,
+    "legendary": true,
+    "mythical": false
+  },
+  "717": {
+    "captureRate": 45,
+    "legendary": true,
+    "mythical": false
+  },
+  "718": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "719": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "720": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "721": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "722": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "723": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "724": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "725": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "726": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "727": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "728": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "729": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "730": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "731": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "732": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "733": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "734": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "735": {
+    "captureRate": 127,
+    "legendary": false,
+    "mythical": false
+  },
+  "736": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "737": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "738": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "739": {
+    "captureRate": 225,
+    "legendary": false,
+    "mythical": false
+  },
+  "740": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "741": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "742": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "743": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "744": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "745": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "746": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "747": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "748": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "749": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "750": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "751": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "752": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "753": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "754": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "755": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "756": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "757": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "758": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "759": {
+    "captureRate": 140,
+    "legendary": false,
+    "mythical": false
+  },
+  "760": {
+    "captureRate": 70,
+    "legendary": false,
+    "mythical": false
+  },
+  "761": {
+    "captureRate": 235,
+    "legendary": false,
+    "mythical": false
+  },
+  "762": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "763": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "764": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "765": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "766": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "767": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "768": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "769": {
+    "captureRate": 140,
+    "legendary": false,
+    "mythical": false
+  },
+  "770": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "771": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "772": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "773": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "774": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "775": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "776": {
+    "captureRate": 70,
+    "legendary": false,
+    "mythical": false
+  },
+  "777": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "778": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "779": {
+    "captureRate": 80,
+    "legendary": false,
+    "mythical": false
+  },
+  "780": {
+    "captureRate": 70,
+    "legendary": false,
+    "mythical": false
+  },
+  "781": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "782": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "783": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "784": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "785": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "786": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "787": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "788": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "789": {
+    "captureRate": 45,
+    "legendary": true,
+    "mythical": false
+  },
+  "790": {
+    "captureRate": 45,
+    "legendary": true,
+    "mythical": false
+  },
+  "791": {
+    "captureRate": 45,
+    "legendary": true,
+    "mythical": false
+  },
+  "792": {
+    "captureRate": 45,
+    "legendary": true,
+    "mythical": false
+  },
+  "793": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "794": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "795": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "796": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "797": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "798": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "799": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "800": {
+    "captureRate": 255,
+    "legendary": true,
+    "mythical": false
+  },
+  "801": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "802": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "803": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "804": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "805": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "806": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "807": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "808": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "809": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "810": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "811": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "812": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "813": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "814": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "815": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "816": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "817": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "818": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "819": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "820": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "821": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "822": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "823": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "824": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "825": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "826": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "827": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "828": {
+    "captureRate": 127,
+    "legendary": false,
+    "mythical": false
+  },
+  "829": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "830": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "831": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "832": {
+    "captureRate": 127,
+    "legendary": false,
+    "mythical": false
+  },
+  "833": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "834": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "835": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "836": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "837": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "838": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "839": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "840": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "841": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "842": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "843": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "844": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "845": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "846": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "847": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "848": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "849": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "850": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "851": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "852": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "853": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "854": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "855": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "856": {
+    "captureRate": 235,
+    "legendary": false,
+    "mythical": false
+  },
+  "857": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "858": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "859": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "860": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "861": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "862": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "863": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "864": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "865": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "866": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "867": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "868": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "869": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "870": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "871": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "872": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "873": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "874": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "875": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "876": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "877": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "878": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "879": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "880": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "881": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "882": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "883": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "884": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "885": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "886": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "887": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "888": {
+    "captureRate": 10,
+    "legendary": true,
+    "mythical": false
+  },
+  "889": {
+    "captureRate": 10,
+    "legendary": true,
+    "mythical": false
+  },
+  "890": {
+    "captureRate": 255,
+    "legendary": true,
+    "mythical": false
+  },
+  "891": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "892": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "893": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  },
+  "894": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "895": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "896": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "897": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "898": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "899": {
+    "captureRate": 135,
+    "legendary": false,
+    "mythical": false
+  },
+  "900": {
+    "captureRate": 115,
+    "legendary": false,
+    "mythical": false
+  },
+  "901": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "902": {
+    "captureRate": 135,
+    "legendary": false,
+    "mythical": false
+  },
+  "903": {
+    "captureRate": 135,
+    "legendary": false,
+    "mythical": false
+  },
+  "904": {
+    "captureRate": 135,
+    "legendary": false,
+    "mythical": false
+  },
+  "905": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "906": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "907": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "908": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "909": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "910": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "911": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "912": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "913": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "914": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "915": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "916": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "917": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "918": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "919": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "920": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "921": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "922": {
+    "captureRate": 80,
+    "legendary": false,
+    "mythical": false
+  },
+  "923": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "924": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "925": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "926": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "927": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "928": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "929": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "930": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "931": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "932": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "933": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "934": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "935": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "936": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "937": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "938": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "939": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "940": {
+    "captureRate": 180,
+    "legendary": false,
+    "mythical": false
+  },
+  "941": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "942": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "943": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "944": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "945": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "946": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "947": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "948": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "949": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "950": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "951": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "952": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "953": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "954": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "955": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "956": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "957": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "958": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "959": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "960": {
+    "captureRate": 255,
+    "legendary": false,
+    "mythical": false
+  },
+  "961": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "962": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "963": {
+    "captureRate": 200,
+    "legendary": false,
+    "mythical": false
+  },
+  "964": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "965": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "966": {
+    "captureRate": 75,
+    "legendary": false,
+    "mythical": false
+  },
+  "967": {
+    "captureRate": 190,
+    "legendary": false,
+    "mythical": false
+  },
+  "968": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "969": {
+    "captureRate": 70,
+    "legendary": false,
+    "mythical": false
+  },
+  "970": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "971": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "972": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "973": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "974": {
+    "captureRate": 150,
+    "legendary": false,
+    "mythical": false
+  },
+  "975": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "976": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "977": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "978": {
+    "captureRate": 100,
+    "legendary": false,
+    "mythical": false
+  },
+  "979": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "980": {
+    "captureRate": 90,
+    "legendary": false,
+    "mythical": false
+  },
+  "981": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "982": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "983": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "984": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "985": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "986": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "987": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "988": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "989": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "990": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "991": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "992": {
+    "captureRate": 50,
+    "legendary": false,
+    "mythical": false
+  },
+  "993": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "994": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "995": {
+    "captureRate": 30,
+    "legendary": false,
+    "mythical": false
+  },
+  "996": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "997": {
+    "captureRate": 25,
+    "legendary": false,
+    "mythical": false
+  },
+  "998": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "999": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "1000": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "1001": {
+    "captureRate": 6,
+    "legendary": true,
+    "mythical": false
+  },
+  "1002": {
+    "captureRate": 6,
+    "legendary": true,
+    "mythical": false
+  },
+  "1003": {
+    "captureRate": 6,
+    "legendary": true,
+    "mythical": false
+  },
+  "1004": {
+    "captureRate": 6,
+    "legendary": true,
+    "mythical": false
+  },
+  "1005": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "1006": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "1007": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "1008": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "1009": {
+    "captureRate": 5,
+    "legendary": false,
+    "mythical": false
+  },
+  "1010": {
+    "captureRate": 5,
+    "legendary": false,
+    "mythical": false
+  },
+  "1011": {
+    "captureRate": 45,
+    "legendary": false,
+    "mythical": false
+  },
+  "1012": {
+    "captureRate": 120,
+    "legendary": false,
+    "mythical": false
+  },
+  "1013": {
+    "captureRate": 60,
+    "legendary": false,
+    "mythical": false
+  },
+  "1014": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "1015": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "1016": {
+    "captureRate": 3,
+    "legendary": true,
+    "mythical": false
+  },
+  "1017": {
+    "captureRate": 5,
+    "legendary": true,
+    "mythical": false
+  },
+  "1018": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "1019": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "1020": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "1021": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "1022": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "1023": {
+    "captureRate": 10,
+    "legendary": false,
+    "mythical": false
+  },
+  "1024": {
+    "captureRate": 255,
+    "legendary": true,
+    "mythical": false
+  },
+  "1025": {
+    "captureRate": 3,
+    "legendary": false,
+    "mythical": true
+  }
+}
+

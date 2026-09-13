@@ -1,6 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
 const { getRandomPokemon } = require('./pokemonService');
 const { getGuildSettings } = require('./database');
+const { createEncounter } = require('./wildRewards');
+const { t, withLanguage, guildLanguage } = require('./i18n');
 
 // Estado en memoria por servidor (no necesita persistir en DB)
 // state.get(guildId) = { messageCount, threshold, activeSpawn, timeTimer }
@@ -24,11 +26,11 @@ function randomThreshold(min, max) {
 
 async function spawnPokemon(client, guildId, channelId) {
   const st = getState(guildId);
-  if (st.activeSpawn) return; // ya hay uno activo, no duplicar
+  if (st.activeSpawn || st.spawning) return;
+  st.spawning = true;
 
   try {
     const pokemon = await getRandomPokemon();
-    st.activeSpawn = pokemon;
 
     const channel = await client.channels.fetch(channelId).catch(() => null);
     if (!channel) {
@@ -37,16 +39,34 @@ async function spawnPokemon(client, guildId, channelId) {
     }
 
     const embed = new EmbedBuilder()
-      .setTitle('¡Un Pokémon salvaje ha aparecido!')
+      .setTitle(withLanguage(guildLanguage(guildId),()=>t('¡Un Pokémon salvaje ha aparecido!','A wild Pokémon has appeared!')))
       .setImage(pokemon.image)
       .setColor(0xffcb05)
-      .setFooter({ text: 'Escribe el comando de captura seguido del nombre para atraparlo.' });
+      .setFooter({ text: withLanguage(guildLanguage(guildId),()=>t('Escribe @Pokebot catch <nombre> para atraparlo.','Type @Pokebot catch <name> to catch it.')) });
 
     await channel.send({ embeds: [embed] });
+    st.activeSpawn = createEncounter(pokemon,channelId);
   } catch (err) {
     console.error('Error al spawnear pokemon:', err.message);
     st.activeSpawn = null;
+  } finally {
+    st.spawning = false;
   }
+}
+
+// Keep the encounter until the database confirms its award. Reuse its ID after timeouts.
+function reserveCatch(guildId,channelId,guessName,userId) {
+  const st=getState(guildId); const p=st.activeSpawn;
+  if(!p || st.claiming || p.channelId!==channelId || p.name.toLowerCase()!==guessName.trim().toLowerCase()) return null;
+  if(st.claimOwner && st.claimOwner!==userId) return null;
+  st.claiming=true; st.claimOwner=userId;
+  return p;
+}
+function finishCatch(guildId,encounterId,success) {
+  const st=getState(guildId);
+  if(st.activeSpawn?.encounterId!==encounterId) return;
+  st.claiming=false;
+  if(success) { st.activeSpawn=null; st.claimOwner=null; }
 }
 
 async function handleMessage(client, message, providedSettings) {
@@ -110,4 +130,5 @@ function restartTimeSpawner(client, guildId) {
   return startTimeSpawner(client, guildId);
 }
 
-module.exports = { handleMessage, tryCatch, startTimeSpawner, restartTimeSpawner, getState };
+module.exports = { handleMessage, tryCatch, reserveCatch, finishCatch, startTimeSpawner, restartTimeSpawner, getState, spawnPokemon };
+

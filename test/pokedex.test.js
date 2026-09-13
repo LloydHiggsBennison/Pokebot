@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { MessageFlags } = require('discord.js');
 const { loadModule } = require('./helpers');
+const { withLanguage } = require('../src/i18n');
 function fixture(count = 21) {
   let now = Date.now();
   const reads = [], edits = [];
@@ -16,6 +17,15 @@ function fixture(count = 21) {
     async update(p) { this.updated = p; }, async reply(p) { this.replied = p; }, ...overrides });
   return { manager, message, reads, edits, interaction, expire() { now += 600001; } };
 }
+
+test('English pokedex translates pagination and owner-only errors',async()=>{
+  const f=fixture();
+  await withLanguage('en',()=>f.manager.showPokedex(f.message));
+  assert.match(f.edits[0].embeds[0].data.footer.text,/Page 1/);
+  const click=f.interaction(f.edits[0].components[0].toJSON().components[1].custom_id,{user:{id:'other'}});
+  await withLanguage('en',()=>f.manager.handlePokedexButton(click));
+  assert.match(click.replied.content,/belongs to someone else/);
+});
 
 test('pokedex shows ten rows, counts, owner, thumbnail, totals and pages', async () => {
   const f = fixture();
@@ -83,3 +93,4 @@ test('expired sessions and forged page numbers respond privately', async () => {
   assert.match(expired.replied.content, /expiró/);
   assert.equal(expired.replied.flags, MessageFlags.Ephemeral);
 });
+
