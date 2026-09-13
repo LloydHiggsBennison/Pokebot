@@ -9,6 +9,10 @@ module.exports = {
     if (message.author.bot || !message.guild) return;
 
     const content = message.content.trim();
+    if (content.toLowerCase() === '$pokedex') {
+      await require('../pokedexManager').showPokedex(message);
+      return;
+    }
     // $p can report initialization immediately, even if the database is down.
     const settings = content.toLowerCase() === '$p' ? null : await getGuildSettings(message.guild.id);
     const catchCmd = (settings?.catch_command || '$p').trim();

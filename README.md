@@ -104,6 +104,7 @@ es local al proceso, no un bloqueo distribuido entre réplicas.
 | Comando | Uso |
 |---|---|
 | `$p` | Tirada personal |
+| `$pokedex` | Colección personal paginada, con cantidades de Pokémon repetidos |
 | `<comando> <nombre>` | Atrapar el Pokémon salvaje activo |
 | `/pokeconfig canal` | Canal para apariciones salvajes |
 | `/pokeconfig modo` | `messages`, `time`, `both` |
@@ -126,3 +127,23 @@ El cooldown se consulta cuando está habilitado y se persiste
 en cada tirada. Los premios se guardan antes de anunciar el resultado.
 
 Proyecto de fans, no afiliado con Nintendo, Game Freak ni The Pokémon Company.
+
+## Pokédex personal
+
+`$pokedex` muestra únicamente las capturas de quien escribe el comando en ese servidor.
+No acepta menciones ni IDs para consultar la colección de otra persona. El mensaje lleva
+su nombre y avatar, una Pokédex roja, diez especies por página y cantidades como `x2`.
+El contador indica especies diferentes obtenidas sobre 1025; las copias no aumentan
+ese contador. El orden es el de primera captura.
+
+Los botones 👈/👉 recorren las páginas y vuelven al principio/final. Solo el autor puede
+usarlos; otros usuarios reciben un aviso privado para abrir su propia Pokédex. La lista
+es visible en el canal como en un embed normal de Discord. La navegación dura diez minutos
+(o hasta reiniciar el bot) y luego se puede abrir otra con `$pokedex`. Cada apertura
+obtiene una nueva instantánea; capturas posteriores aparecen al ejecutar el comando de nuevo.
+
+Las páginas se mantienen en memoria para navegar sin consultas adicionales. Las lecturas
+filtran servidor y usuario en la base de datos y recorren todo el historial por ID, incluso
+si Supabase limita la cantidad de filas devueltas. No requiere migraciones ni registrar
+nuevos comandos slash. El bot necesita `Embed Links` y `Attach Files` en el canal, además
+de los permisos de mensajes existentes.

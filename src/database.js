@@ -229,6 +229,39 @@ async function getUserCaptures(guildId, userId) {
 // ----------------------------------------------------
 // USER ROLLS COOLDOWN
 // ----------------------------------------------------
+// Snapshot by capture ID: no Supabase row-limit truncation or endlessly growing scan.
+async function getPokedexEntries(guildId, userId) {
+  if (!useSupabase) {
+    return db.prepare(`SELECT pokemon_id AS id, pokemon_name AS name, COUNT(*) AS count
+      FROM captures WHERE guild_id = ? AND user_id = ?
+      GROUP BY pokemon_id, pokemon_name ORDER BY MIN(id)`).all(guildId, userId);
+  }
+  const scoped = () => supabase.from('captures').select('id,pokemon_id,pokemon_name')
+    .eq('guild_id', guildId).eq('user_id', userId);
+  const { data: latest, error: latestError } = await scoped().order('id', { ascending: false }).limit(1);
+  if (latestError) throw latestError;
+  if (!latest?.length) return [];
+  const upperId = latest[0].id;
+  let cursor = 0;
+  const entries = new Map();
+  while (true) {
+    const { data, error } = await scoped().gt('id', cursor).lte('id', upperId)
+      .order('id', { ascending: true }).limit(500);
+    if (error) throw error;
+    if (!data?.length) break;
+    for (const capture of data) {
+      const existing = entries.get(capture.pokemon_id);
+      if (existing) existing.count++;
+      else entries.set(capture.pokemon_id, { id: capture.pokemon_id, name: capture.pokemon_name, count: 1 });
+    }
+    const next = data[data.length - 1].id;
+    if (BigInt(next) <= BigInt(cursor)) throw new Error('La consulta de Pokédex no avanzó.');
+    cursor = next;
+    if (BigInt(cursor) >= BigInt(upperId)) break;
+  }
+  return [...entries.values()];
+}
+
 async function getLastRoll(guildId, userId) {
   if (useSupabase) {
     const { data, error } = await supabase
@@ -289,6 +322,7 @@ module.exports = {
   addCapture,
   addCaptures,
   getUserCaptures,
+  getPokedexEntries,
   hasCapture,
   getLastRoll,
   setLastRoll,

@@ -1,6 +1,17 @@
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction, client) {
+    if (interaction.isButton?.() && interaction.customId.startsWith('pokedex:')) {
+      try {
+        await require('../pokedexManager').handlePokedexButton(interaction);
+      } catch (error) {
+        console.error('[Pokedex] Error al cambiar página:', error.message);
+        if (!interaction.replied && !interaction.deferred) {
+          await interaction.reply({ content: 'No se pudo cambiar de página. Vuelve a usar `$pokedex`.', ephemeral: true });
+        }
+      }
+      return;
+    }
     if (!interaction.isChatInputCommand()) return;
 
     const command = client.commands.get(interaction.commandName);

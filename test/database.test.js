@@ -36,8 +36,19 @@ function supabaseFixture() {
       if (method === 'PATCH') { Object.assign(settings.get(g), body); }
     }
     if (table === 'captures') {
-      if (method === 'POST') captures.push(...body);
-      if (method === 'GET') data = captures.filter(p => p.guild_id === g && p.user_id === u && (!name || name === p.pokemon_name));
+      if (method === 'POST') for (const item of body) captures.push({ ...item, id: captures.length + 1 });
+      if (method === 'GET') {
+        data = captures.filter(p => p.guild_id === g && p.user_id === u && (!name || name === p.pokemon_name));
+        for (const filter of parsed.searchParams.getAll('id')) {
+          const [op, id] = filter.split('.');
+          data = data.filter(p => op === 'gt' ? p.id > Number(id) : p.id <= Number(id));
+        }
+        if (parsed.searchParams.get('order')?.startsWith('id.')) {
+          data.sort((a,b) => parsed.searchParams.get('order').includes('desc') ? b.id-a.id : a.id-b.id);
+        }
+        // Simulate a server cap lower than the requested page size.
+        if (parsed.searchParams.has('limit')) data = data.slice(0, Math.min(100, Number(parsed.searchParams.get('limit'))));
+      }
     }
     if (table === 'user_rolls') {
       if (method === 'POST') rolls.set(`${body.guild_id}:${body.user_id}`, body);
@@ -182,4 +193,17 @@ test('a late background response cannot overwrite an explicit config update', as
   release();
   await new Promise(resolve => setImmediate(resolve));
   assert.equal((await fixture.db.getGuildSettings('g')).catch_command, '!new');
+});
+
+test('pokedex reads every capture beyond 1000 and isolates guild and owner', async () => {
+  const { db } = supabaseFixture();
+  await db.addCaptures('g', 'owner', Array.from({ length: 1105 }, (_, i) => ({ id: i % 11 + 1, name: `pokemon${i % 11 + 1}` })));
+  await db.addCaptures('g', 'other', [{ id: 999, name: 'foreign' }]);
+  await db.addCaptures('other', 'owner', [{ id: 998, name: 'foreignguild' }]);
+  const entries = await db.getPokedexEntries('g', 'owner');
+  assert.equal(entries.length, 11);
+  assert.equal(entries.reduce((total, p) => total + p.count, 0), 1105);
+  assert.equal(entries[0].count, 101);
+  assert.equal(entries.some(p => p.id >= 998), false);
+  assert.equal((await db.getPokedexEntries('g', 'missing')).length, 0);
 });

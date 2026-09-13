@@ -1,0 +1,85 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { MessageFlags } = require('discord.js');
+const { loadModule } = require('./helpers');
+function fixture(count = 21) {
+  let now = Date.now();
+  const reads = [], edits = [];
+  const entries = Array.from({ length: count }, (_, i) => ({ id: i + 1, name: `pokemon${i+1}`, count: i === 0 ? 2 : 1 }));
+  const manager = loadModule('src/pokedexManager.js', {
+    './database': { async getPokedexEntries(g,u) { reads.push([g,u]); return entries.map(p => ({ ...p })); } },
+    './emojiManager': { getPreparedEmoji(client, name) { return `<:${name}:123456789012345678>`; } },
+  }, { Date: { now: () => now } });
+  const message = { guild: { id: 'guild', client: {} }, author: { id: 'owner', username: 'Trainer', displayAvatarURL: () => 'https://cdn.discordapp.com/embed/avatars/0.png' },
+    async reply() { return { id: 'message', async edit(payload) { edits.push(payload); } }; } };
+  const interaction = (customId, overrides = {}) => ({ customId, user: { id: 'owner' }, guildId: 'guild', message: { id: 'message' },
+    async update(p) { this.updated = p; }, async reply(p) { this.replied = p; }, ...overrides });
+  return { manager, message, reads, edits, interaction, expire() { now += 600001; } };
+}
+
+test('pokedex shows ten rows, counts, owner, thumbnail, totals and pages', async () => {
+  const f = fixture();
+  await f.manager.showPokedex(f.message);
+  assert.deepEqual(f.reads, [['guild', 'owner']]);
+  const payload = f.edits[0], embed = payload.embeds[0].toJSON();
+  assert.equal(embed.description.split('\n').length, 10);
+  assert.match(embed.description, /Pokemon1 x2/);
+  assert.equal(embed.author.name, 'Trainer');
+  assert.equal(embed.color, 0xffcb05);
+  assert.equal(embed.thumbnail.url, 'attachment://pokedex.png');
+  assert.equal(embed.footer.text, '21 / 1.025 - Página 1 / 3');
+  assert.equal(payload.files[0].name, 'pokedex.png');
+});
+
+test('owner can move forward and wrap back with no additional database requests', async () => {
+  const f = fixture();
+  await f.manager.showPokedex(f.message);
+  const buttons = f.edits[0].components[0].toJSON().components;
+  const next = f.interaction(buttons[1].custom_id);
+  await f.manager.handlePokedexButton(next);
+  assert.match(next.updated.embeds[0].data.footer.text, /Página 2 \/ 3/);
+  assert.match(next.updated.embeds[0].data.description, /Pokemon11/);
+  const prev = f.interaction(buttons[0].custom_id);
+  await f.manager.handlePokedexButton(prev);
+  assert.match(prev.updated.embeds[0].data.footer.text, /Página 3 \/ 3/);
+  assert.equal(prev.updated.embeds[0].data.description.split('\n').length, 1);
+  assert.equal(f.reads.length, 1);
+  assert.equal(next.updated.files, undefined); // retain the existing thumbnail attachment
+});
+
+test('another user, another guild, and another message cannot navigate the collection', async () => {
+  const f = fixture();
+  await f.manager.showPokedex(f.message);
+  const id = f.edits[0].components[0].toJSON().components[1].custom_id;
+  for (const override of [{ user: { id: 'other' } }, { guildId: 'other' }, { message: { id: 'other' } }]) {
+    const click = f.interaction(id, override);
+    await f.manager.handlePokedexButton(click);
+    assert.equal(click.updated, undefined);
+    assert.equal(click.replied.flags, MessageFlags.Ephemeral);
+    assert.match(click.replied.content, /otra persona/);
+  }
+});
+
+test('empty and single-page collections have disabled navigation', async () => {
+  for (const count of [0, 1, 10]) {
+    const f = fixture(count);
+    await f.manager.showPokedex(f.message);
+    assert.ok(f.edits[0].components[0].toJSON().components.every(c => c.disabled));
+    assert.equal(new Set(f.edits[0].components[0].toJSON().components.map(c => c.custom_id)).size, 2);
+    if (!count) assert.match(f.edits[0].embeds[0].data.description, /Todavía no/);
+  }
+});
+
+test('expired sessions and forged page numbers respond privately', async () => {
+  const f = fixture();
+  await f.manager.showPokedex(f.message);
+  const id = f.edits[0].components[0].toJSON().components[1].custom_id;
+  const forged = f.interaction(id.replace(/:\d+:/, ':99999:'));
+  await f.manager.handlePokedexButton(forged);
+  assert.match(forged.replied.content, /no válida/);
+  f.expire();
+  const expired = f.interaction(id);
+  await f.manager.handlePokedexButton(expired);
+  assert.match(expired.replied.content, /expiró/);
+  assert.equal(expired.replied.flags, MessageFlags.Ephemeral);
+});
