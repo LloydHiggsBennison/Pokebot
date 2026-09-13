@@ -26,6 +26,11 @@ CREATE INDEX IF NOT EXISTS captures_owner_pokemon_idx
   ON public.captures (guild_id, user_id, pokemon_name);
 ```
 
+Para habilitar `$pokefuse` en una instalación existente, ejecuta una vez
+`supabase_migration_pokefuse.sql` en el SQL Editor de Supabase. Añade la marca shiny,
+un índice para localizar cinco copias y una función transaccional que conserva una
+captura, consume cuatro y crea la shiny sin permitir doble consumo concurrente.
+
 El código sigue siendo compatible con las tablas existentes aunque el índice aún no
 esté aplicado. En una tabla muy grande, el administrador puede crear el índice con
 `CONCURRENTLY`, fuera de una transacción. Para desarrollo local sin Supabase se usa
@@ -105,6 +110,7 @@ es local al proceso, no un bloqueo distribuido entre réplicas.
 |---|---|
 | `$p` | Tirada personal |
 | `$pokedex` | Colección personal paginada, con cantidades de Pokémon repetidos |
+| `$pokefuse` | Fusión personal: cinco copias normales iguales → conserva una y crea una shiny |
 | `<comando> <nombre>` | Atrapar el Pokémon salvaje activo |
 | `/pokeconfig canal` | Canal para apariciones salvajes |
 | `/pokeconfig modo` | `messages`, `time`, `both` |
@@ -147,3 +153,11 @@ filtran servidor y usuario en la base de datos y recorren todo el historial por 
 si Supabase limita la cantidad de filas devueltas. No requiere migraciones ni registrar
 nuevos comandos slash. El bot necesita `Embed Links` y `Attach Files` en el canal, además
 de los permisos de mensajes existentes.
+
+## Fusión shiny
+
+`$pokefuse` muestra un selector para el autor con cada especie que tiene al menos cinco
+copias normales. Al confirmar, la base de datos conserva la captura normal más antigua,
+consume exactamente cuatro y registra una captura shiny. Las shiny no cuentan como
+ingredientes para otra fusión. El selector expira en cinco minutos y rechaza clics de
+otros usuarios, servidores o mensajes.

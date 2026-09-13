@@ -41,13 +41,14 @@ if (supabaseUrl && supabaseKey) {
     CREATE TABLE IF NOT EXISTS captures (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       guild_id TEXT, user_id TEXT,
-      pokemon_name TEXT, pokemon_id INTEGER, caught_at INTEGER
+      pokemon_name TEXT, pokemon_id INTEGER, is_shiny INTEGER DEFAULT 0, caught_at INTEGER
     );
     CREATE TABLE IF NOT EXISTS user_rolls (
       guild_id TEXT, user_id TEXT, last_roll INTEGER,
       PRIMARY KEY (guild_id, user_id)
     );
     CREATE INDEX IF NOT EXISTS captures_owner_pokemon_idx ON captures (guild_id, user_id, pokemon_name);
+    CREATE INDEX IF NOT EXISTS captures_fusion_idx ON captures (guild_id, user_id, pokemon_id, is_shiny, id);
     `);
     try { db.exec('ALTER TABLE guild_settings ADD COLUMN puzzle_cooldown_seconds INTEGER DEFAULT 0;'); } catch (_) {}
     console.log('📁 Base de datos conectada a SQLite local (pokebot.sqlite)');
@@ -196,15 +197,16 @@ async function addCaptures(guildId, userId, pokemons) {
         user_id: userId,
         pokemon_name: pokemon.name,
         pokemon_id: pokemon.id,
+        is_shiny: pokemon.isShiny ? 1 : 0,
         caught_at: caughtAt,
       })));
     if (error) throw error;
   } else {
     const insert = db.prepare(
-      'INSERT INTO captures (guild_id, user_id, pokemon_name, pokemon_id, caught_at) VALUES (?, ?, ?, ?, ?)'
+      'INSERT INTO captures (guild_id, user_id, pokemon_name, pokemon_id, is_shiny, caught_at) VALUES (?, ?, ?, ?, ?, ?)'
     );
     db.transaction(() => {
-      for (const pokemon of pokemons) insert.run(guildId, userId, pokemon.name, pokemon.id, caughtAt);
+      for (const pokemon of pokemons) insert.run(guildId, userId, pokemon.name, pokemon.id, pokemon.isShiny ? 1 : 0, caughtAt);
     })();
   }
 }
@@ -232,11 +234,11 @@ async function getUserCaptures(guildId, userId) {
 // Snapshot by capture ID: no Supabase row-limit truncation or endlessly growing scan.
 async function getPokedexEntries(guildId, userId) {
   if (!useSupabase) {
-    return db.prepare(`SELECT pokemon_id AS id, pokemon_name AS name, COUNT(*) AS count
+    return db.prepare(`SELECT pokemon_id AS id, pokemon_name AS name, is_shiny AS isShiny, COUNT(*) AS count
       FROM captures WHERE guild_id = ? AND user_id = ?
-      GROUP BY pokemon_id, pokemon_name ORDER BY MIN(id)`).all(guildId, userId);
+      GROUP BY pokemon_id, pokemon_name, is_shiny ORDER BY MIN(id)`).all(guildId, userId);
   }
-  const scoped = () => supabase.from('captures').select('id,pokemon_id,pokemon_name')
+  const scoped = () => supabase.from('captures').select('id,pokemon_id,pokemon_name,is_shiny')
     .eq('guild_id', guildId).eq('user_id', userId);
   const { data: latest, error: latestError } = await scoped().order('id', { ascending: false }).limit(1);
   if (latestError) throw latestError;
@@ -250,9 +252,10 @@ async function getPokedexEntries(guildId, userId) {
     if (error) throw error;
     if (!data?.length) break;
     for (const capture of data) {
-      const existing = entries.get(capture.pokemon_id);
+      const key = `${capture.pokemon_id}:${capture.is_shiny ? 1 : 0}`;
+      const existing = entries.get(key);
       if (existing) existing.count++;
-      else entries.set(capture.pokemon_id, { id: capture.pokemon_id, name: capture.pokemon_name, count: 1 });
+      else entries.set(key, { id: capture.pokemon_id, name: capture.pokemon_name, isShiny: !!capture.is_shiny, count: 1 });
     }
     const next = data[data.length - 1].id;
     if (BigInt(next) <= BigInt(cursor)) throw new Error('La consulta de Pokédex no avanzó.');
@@ -260,6 +263,32 @@ async function getPokedexEntries(guildId, userId) {
     if (BigInt(cursor) >= BigInt(upperId)) break;
   }
   return [...entries.values()];
+}
+
+async function fusePokemon(guildId, userId, pokemonId, pokemonName) {
+  if (!Number.isInteger(pokemonId) || !pokemonName) throw new TypeError('Pokémon inválido.');
+  if (useSupabase) {
+    const { data, error } = await supabase.rpc('fuse_pokemon', {
+      p_guild_id: guildId, p_user_id: userId, p_pokemon_id: pokemonId, p_pokemon_name: pokemonName,
+    });
+    if (error) throw error;
+    return data?.[0] || data || null;
+  }
+  const transaction = db.transaction(() => {
+    const normal = db.prepare(`SELECT id FROM captures WHERE guild_id = ? AND user_id = ?
+      AND pokemon_id = ? AND COALESCE(is_shiny, 0) = 0 ORDER BY id LIMIT 5`).all(guildId, userId, pokemonId);
+    if (normal.length < 5) return null;
+    db.prepare(`DELETE FROM captures WHERE id IN (${normal.slice(1).map(() => '?').join(',')})`).run(...normal.slice(1).map(row => row.id));
+    db.prepare(`INSERT INTO captures (guild_id,user_id,pokemon_name,pokemon_id,is_shiny,caught_at)
+      VALUES (?,?,?,?,1,?)`).run(guildId, userId, pokemonName, pokemonId, Date.now());
+    return { pokemon_id: pokemonId, pokemon_name: pokemonName, consumed: 4 };
+  });
+  return transaction();
+}
+
+async function getFuseCandidates(guildId, userId) {
+  const entries = await getPokedexEntries(guildId, userId);
+  return entries.filter(entry => !entry.isShiny && entry.count >= 5);
 }
 
 async function getLastRoll(guildId, userId) {
@@ -323,6 +352,8 @@ module.exports = {
   addCaptures,
   getUserCaptures,
   getPokedexEntries,
+  fusePokemon,
+  getFuseCandidates,
   hasCapture,
   getLastRoll,
   setLastRoll,

@@ -12,6 +12,14 @@ module.exports = {
       }
       return;
     }
+    if (interaction.isStringSelectMenu?.() && interaction.customId.startsWith('pokefuse:')) {
+      try { await require('../pokefuseManager').handleFuseSelect(interaction); }
+      catch (error) {
+        console.error('[Pokefuse] Error:', error.message);
+        if (!interaction.replied && !interaction.deferred) await interaction.reply({ content: 'No se pudo completar la fusión.', ephemeral: true });
+      }
+      return;
+    }
     if (!interaction.isChatInputCommand()) return;
 
     const command = client.commands.get(interaction.commandName);

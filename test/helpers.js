@@ -45,7 +45,20 @@ function fakeDatabase() {
     async setLastRoll(g, u, now) { rolls.set(`${g}:${u}`, now); },
     async hasCapture(g, u, name) { return captures.some(p => p.guildId === g && p.userId === u && p.name === name); },
     async addCapture(g, u, name, id) { captures.push({ guildId: g, userId: u, name, id }); },
-    async addCaptures(g, u, items) { for (const p of items) captures.push({ guildId: g, userId: u, name: p.name, id: p.id }); },
+    async addCaptures(g, u, items) { for (const p of items) captures.push({ guildId: g, userId: u, name: p.name, id: p.id, isShiny: !!p.isShiny }); },
+    async getFuseCandidates(g, u) {
+      const grouped = new Map();
+      for (const p of captures.filter(p => p.guildId === g && p.userId === u && !p.isShiny)) grouped.set(p.id, (grouped.get(p.id) || 0) + 1);
+      return [...grouped].filter(([, count]) => count >= 5).map(([id, count]) => ({ id, name: captures.find(p => p.id === id).name, count }));
+    },
+    async fusePokemon(g, u, id, name) {
+      const normal = captures.filter(p => p.guildId === g && p.userId === u && p.id === id && !p.isShiny);
+      if (normal.length < 5) return null;
+      let removed = 0;
+      for (let i = captures.length - 1; i >= 0 && removed < 4; i--) if (captures[i].guildId === g && captures[i].userId === u && captures[i].id === id && !captures[i].isShiny) { captures.splice(i, 1); removed++; }
+      captures.push({ guildId: g, userId: u, id, name, isShiny: true });
+      return { pokemon_id: id, pokemon_name: name, consumed: 4 };
+    },
   };
 }
 

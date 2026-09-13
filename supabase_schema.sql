@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS captures (
   user_id TEXT NOT NULL,
   pokemon_name TEXT NOT NULL,
   pokemon_id INT NOT NULL,
+  is_shiny INT NOT NULL DEFAULT 0,
   caught_at BIGINT NOT NULL
 );
 
@@ -36,6 +37,31 @@ CREATE TABLE IF NOT EXISTS user_rolls (
 -- Evita recorrer todo el historial para cada badge NEW.
 CREATE INDEX IF NOT EXISTS captures_owner_pokemon_idx
   ON captures (guild_id, user_id, pokemon_name);
+
+CREATE INDEX IF NOT EXISTS captures_fusion_idx
+  ON captures (guild_id, user_id, pokemon_id, is_shiny, id);
+
+-- Atomic fusion procedure for $pokefuse; see supabase_migration_pokefuse.sql.
+CREATE OR REPLACE FUNCTION public.fuse_pokemon(
+  p_guild_id TEXT, p_user_id TEXT, p_pokemon_id INTEGER, p_pokemon_name TEXT
+)
+RETURNS TABLE (pokemon_id INTEGER, pokemon_name TEXT, consumed INTEGER)
+LANGUAGE plpgsql SET search_path = public AS $$
+DECLARE normal_ids BIGINT[];
+BEGIN
+  SELECT ARRAY_AGG(id ORDER BY id) INTO normal_ids FROM (
+    SELECT id FROM public.captures
+    WHERE guild_id = p_guild_id AND user_id = p_user_id AND pokemon_id = p_pokemon_id
+      AND COALESCE(is_shiny, 0) = 0 ORDER BY id LIMIT 5 FOR UPDATE
+  ) locked;
+  IF COALESCE(array_length(normal_ids, 1), 0) < 5 THEN RETURN; END IF;
+  DELETE FROM public.captures WHERE id = ANY(normal_ids[2:5]);
+  INSERT INTO public.captures (guild_id,user_id,pokemon_name,pokemon_id,is_shiny,caught_at)
+  VALUES (p_guild_id,p_user_id,p_pokemon_name,p_pokemon_id,1,(EXTRACT(EPOCH FROM clock_timestamp()) * 1000)::BIGINT);
+  RETURN QUERY SELECT p_pokemon_id, p_pokemon_name, 4;
+END; $$;
+REVOKE ALL ON FUNCTION public.fuse_pokemon(TEXT, TEXT, INTEGER, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.fuse_pokemon(TEXT, TEXT, INTEGER, TEXT) TO anon, authenticated, service_role;
 
 -- Permisos totales de lectura/escritura para la API del Bot
 GRANT ALL ON ALL TABLES IN SCHEMA public TO postgres, anon, authenticated, service_role;

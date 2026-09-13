@@ -13,6 +13,10 @@ module.exports = {
       await require('../pokedexManager').showPokedex(message);
       return;
     }
+    if (content.toLowerCase() === '$pokefuse') {
+      await require('../pokefuseManager').showFuse(message);
+      return;
+    }
     // $p can report initialization immediately, even if the database is down.
     const settings = content.toLowerCase() === '$p' ? null : await getGuildSettings(message.guild.id);
     const catchCmd = (settings?.catch_command || '$p').trim();

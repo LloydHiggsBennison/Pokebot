@@ -21,7 +21,7 @@ function renderPage(session, token, page) {
   const pages = Math.max(1, Math.ceil(session.entries.length / PAGE_SIZE));
   const description = session.entries.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(p => {
     const name = escapeMarkdown(p.name.charAt(0).toUpperCase() + p.name.slice(1));
-    return `${p.emoji} ${name}${p.count > 1 ? ` x${p.count}` : ''}`;
+    return `${p.isShiny ? '✨ ' : ''}${p.emoji} ${name}${p.count > 1 ? ` x${p.count}` : ''}`;
   }).join('\n') || 'Todavía no has capturado Pokémon. Usa `$p` para empezar tu colección.';
   const embed = new EmbedBuilder().setColor(0xffcb05)
     .setAuthor({ name: session.username, ...(session.avatar ? { iconURL: session.avatar } : {}) })
