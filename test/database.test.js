@@ -30,6 +30,7 @@ function supabaseFixture() {
     }
     if (fail) return new Response(JSON.stringify({ code: 'XX000', message: 'test database failure', details: '', hint: '' }), { status: 503 });
     let data = null;
+    if (table === 'fuse_pokemon') data = [];
     if (table === 'guild_settings') {
       if (method === 'GET') data = settings.has(g) ? [settings.get(g)] : [];
       if (method === 'POST') { if (!settings.has(body.guild_id)) settings.set(body.guild_id, body); data = [settings.get(body.guild_id)]; }
@@ -77,6 +78,14 @@ test('real Supabase SDK: settings reads coalesce, stay cached and invalidate on 
   assert.equal((await db.getGuildSettings('g')).catch_command, '!p');
   assert.equal(requests.length, 4); // update and refreshed read
   assert.equal((await db.getGuildSettings('other')).catch_command, '$p');
+});
+
+test('empty Supabase fusion result means insufficient copies, never success', async () => {
+  const { db, requests } = supabaseFixture();
+  assert.equal(await db.fusePokemon('g', 'u', 25, 'pikachu'), null);
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].table, 'fuse_pokemon');
+  assert.equal(requests[0].body.p_user_id, 'u');
 });
 
 test('real Supabase SDK: captures use one bulk insert, ownership filters and cooldown persist', async () => {

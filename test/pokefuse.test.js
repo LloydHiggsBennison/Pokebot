@@ -36,7 +36,8 @@ test('fusion consumes exactly four normals and creates one shiny', async () => {
   await f.manager.showFuse(f.message);
   const token = f.interactions[0].payload.components[0].components[0].data.custom_id.split(':')[1];
   const interaction = { customId: `pokefuse:${token}`, values: ['25'], user: { id: 'owner' }, guildId: 'guild', message: { id: 'fuse-message' },
-    async update(payload) { this.updated = payload; }, async reply(payload) { this.replied = payload; } };
+    async deferUpdate() { this.deferred = true; },
+    async editReply(payload) { assert.equal(this.deferred, true); this.updated = payload; }, async reply(payload) { this.replied = payload; } };
   await f.manager.handleFuseSelect(interaction);
   assert.equal(f.db.captures.filter(p => p.guildId === 'guild' && p.userId === 'owner' && p.id === 25 && !p.isShiny).length, 1);
   assert.equal(f.db.captures.filter(p => p.guildId === 'guild' && p.userId === 'owner' && p.id === 25 && p.isShiny).length, 1);
@@ -48,7 +49,7 @@ test('fusion selector is owner-only and duplicate clicks cannot consume twice', 
   const f = fixture();
   await f.manager.showFuse(f.message);
   const token = f.interactions[0].payload.components[0].components[0].data.custom_id.split(':')[1];
-  const base = { customId: `pokefuse:${token}`, values: ['25'], guildId: 'guild', message: { id: 'fuse-message' }, async update(p) { this.updated = p; }, async reply(p) { this.replied = p; } };
+  const base = { customId: `pokefuse:${token}`, values: ['25'], guildId: 'guild', message: { id: 'fuse-message' }, async deferUpdate() { this.deferred = true; }, async editReply(p) { this.updated = p; }, async reply(p) { this.replied = p; } };
   const other = { ...base, user: { id: 'other' } };
   await f.manager.handleFuseSelect(other);
   assert.equal(other.replied.flags, MessageFlags.Ephemeral);

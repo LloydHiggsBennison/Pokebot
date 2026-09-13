@@ -21,10 +21,10 @@ BEGIN
   SELECT ARRAY_AGG(id ORDER BY id)
     INTO normal_ids
     FROM (
-      SELECT id FROM public.captures
-      WHERE guild_id = p_guild_id AND user_id = p_user_id
-        AND pokemon_id = p_pokemon_id AND COALESCE(is_shiny, 0) = 0
-      ORDER BY id
+      SELECT c.id FROM public.captures AS c
+      WHERE c.guild_id = p_guild_id AND c.user_id = p_user_id
+        AND c.pokemon_id = p_pokemon_id AND COALESCE(c.is_shiny, 0) = 0
+      ORDER BY c.id
       LIMIT 5
       FOR UPDATE
     ) locked;

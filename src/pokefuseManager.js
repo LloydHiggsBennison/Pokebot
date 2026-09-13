@@ -69,15 +69,22 @@ async function handleFuseSelect(interaction) {
   if (running.has(key)) { await interaction.reply({ content: '⏳ Tu fusión ya está siendo procesada.', flags: MessageFlags.Ephemeral }); return; }
   running.add(key);
   try {
+    await interaction.deferUpdate();
     const result = await fusePokemon(session.guildId, session.ownerId, candidate.id, candidate.name);
     if (!result) {
-      await interaction.update({ content: '❌ Ya no tienes cinco copias normales de ese Pokémon. Abre `$pokefuse` de nuevo.', embeds: [], components: [] });
+      await interaction.editReply({ content: '❌ Ya no tienes cinco copias normales de ese Pokémon. Abre `$pokefuse` de nuevo.', embeds: [], components: [] });
       sessions.delete(token);
       return;
     }
     sessions.delete(token);
     const emoji = candidate.emoji || '🔹';
-    await interaction.update({ content: `✨ **Fusión completada:** ${emoji} **${displayName(candidate.name)} shiny**\nSe consumieron 4 copias normales, conservaste 1 y recibiste 1 shiny.`, embeds: [], components: [] });
+    await interaction.editReply({ content: `✨ **Fusión completada:** ${emoji} **${displayName(candidate.name)} shiny**\nSe consumieron 4 copias normales y recibiste 1 shiny; conservas tus copias normales restantes.`, embeds: [], components: [] });
+  } catch (error) {
+    sessions.delete(token);
+    if (interaction.deferred) {
+      await interaction.editReply({ content: 'No se pudo confirmar la fusión. Revisa tu `$pokedex` antes de intentarlo de nuevo.', embeds: [], components: [] });
+    }
+    throw error;
   } finally { running.delete(key); }
 }
 

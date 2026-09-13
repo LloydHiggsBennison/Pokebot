@@ -48,8 +48,11 @@ if (supabaseUrl && supabaseKey) {
       PRIMARY KEY (guild_id, user_id)
     );
     CREATE INDEX IF NOT EXISTS captures_owner_pokemon_idx ON captures (guild_id, user_id, pokemon_name);
-    CREATE INDEX IF NOT EXISTS captures_fusion_idx ON captures (guild_id, user_id, pokemon_id, is_shiny, id);
     `);
+    if (!db.prepare('PRAGMA table_info(captures)').all().some(column => column.name === 'is_shiny')) {
+      db.exec('ALTER TABLE captures ADD COLUMN is_shiny INTEGER NOT NULL DEFAULT 0');
+    }
+    db.exec('CREATE INDEX IF NOT EXISTS captures_fusion_idx ON captures (guild_id, user_id, pokemon_id, is_shiny, id)');
     try { db.exec('ALTER TABLE guild_settings ADD COLUMN puzzle_cooldown_seconds INTEGER DEFAULT 0;'); } catch (_) {}
     console.log('📁 Base de datos conectada a SQLite local (pokebot.sqlite)');
   } catch (_) {
@@ -272,7 +275,7 @@ async function fusePokemon(guildId, userId, pokemonId, pokemonName) {
       p_guild_id: guildId, p_user_id: userId, p_pokemon_id: pokemonId, p_pokemon_name: pokemonName,
     });
     if (error) throw error;
-    return data?.[0] || data || null;
+    return Array.isArray(data) ? (data[0] || null) : (data || null);
   }
   const transaction = db.transaction(() => {
     const normal = db.prepare(`SELECT id FROM captures WHERE guild_id = ? AND user_id = ?

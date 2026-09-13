@@ -26,7 +26,7 @@ function renderPage(session, token, page) {
   const embed = new EmbedBuilder().setColor(0xffcb05)
     .setAuthor({ name: session.username, ...(session.avatar ? { iconURL: session.avatar } : {}) })
     .setThumbnail('attachment://pokedex.png').setDescription(description)
-    .setFooter({ text: `${session.entries.length} / ${POKEMON_LIST.length.toLocaleString('es-CL')} - Página ${page + 1} / ${pages}` });
+    .setFooter({ text: `${new Set(session.entries.map(entry => entry.id)).size} / ${POKEMON_LIST.length.toLocaleString('es-CL')} - Página ${page + 1} / ${pages}` });
   const buttons = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId(`pokedex:${token}:${(page + pages - 1) % pages}:prev`).setEmoji('👈').setStyle(ButtonStyle.Secondary).setDisabled(pages === 1),
     new ButtonBuilder().setCustomId(`pokedex:${token}:${(page + 1) % pages}:next`).setEmoji('👉').setStyle(ButtonStyle.Secondary).setDisabled(pages === 1),
