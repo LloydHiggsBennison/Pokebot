@@ -3,6 +3,7 @@ const { prepareRollEmojis, getEmojiStatus } = require('./emojiManager');
 const { takeFromPool } = require('./pokemonPool');
 const { getGuildSettings, getLastRoll, setLastRoll, addCaptures, hasCapture } = require('./database');
 const { getNewBadgeEmoji } = require('./badgeManager');
+const { rarityFor } = require('./wildRewards');
 
 const NUM_ROWS = 5;
 const BELL  = '🔔';
@@ -48,7 +49,11 @@ function capitalize(str) {
 
 const activeRolls = new Set();
 
-async function rollPuzzle(message, settings) {
+async function rollPuzzle(message, settings, quantity) {
+  if (quantity !== undefined && (!Number.isInteger(quantity) || quantity < 1 || quantity > 20)) {
+    await message.reply(t('Usa `$p número` con un entero entre 1 y 20.', 'Use `$p number` with an integer from 1 to 20.'));
+    return;
+  }
   const status = getEmojiStatus(message.guild.client);
   if (status.status !== 'ready') {
     const text = status.status === 'error'
@@ -65,13 +70,13 @@ async function rollPuzzle(message, settings) {
   activeRolls.add(key);
   const started = performance.now();
   try {
-    await executeRoll(message, settings, started);
+    await executeRoll(message, settings, started, quantity);
   } finally {
     activeRolls.delete(key);
   }
 }
 
-async function executeRoll(message, providedSettings, started) {
+async function executeRoll(message, providedSettings, started, quantity) {
   const guildId = message.guild.id;
   const userId  = message.author.id;
   const username = message.author.username; // sin @ ni mención
@@ -89,6 +94,9 @@ async function executeRoll(message, providedSettings, started) {
   }
 
   // 1. Full catalog in memory; no sprite reads or network calls.
+  const rows = [];
+  const winners = [];
+  for (let roll = 0; roll < (quantity ?? 1); roll++) {
   const pool = takeFromPool(15);
   let poolIdx = 0;
   const next = () => { const p = pool[poolIdx % pool.length]; poolIdx++; return p; };
@@ -96,8 +104,6 @@ async function executeRoll(message, providedSettings, started) {
   const winnerCount      = pickWinnerCount();
   const winnerRowIndices = new Set(pickRandomIndices(NUM_ROWS, winnerCount));
 
-  const rows    = [];
-  const winners = [];
 
   for (let r = 0; r < NUM_ROWS; r++) {
     if (winnerRowIndices.has(r)) {
@@ -109,6 +115,7 @@ async function executeRoll(message, providedSettings, started) {
       if (p1.id === p2.id && p2.id === p3.id) { poolIdx++; p3 = next(); }
       rows.push({ items: [p1, p2, p3], isWinner: false });
     }
+  }
   }
 
   // 2. Emojis: obtener todos los únicos del grid + los ganadores
@@ -136,7 +143,7 @@ async function executeRoll(message, providedSettings, started) {
   const badge = winners.length ? getNewBadgeEmoji(message.guild) : '';
   const isNewMap = new Map();
   await Promise.all(
-    winners.map(async w => {
+    [...new Map(winners.map(w => [w.id, w])).values()].map(async w => {
       const alreadyHas = await hasCapture(guildId, userId, w.name);
       isNewMap.set(w.id, !alreadyHas);
     })
@@ -150,6 +157,42 @@ async function executeRoll(message, providedSettings, started) {
   const failure = writes.find(result => result.status === 'rejected');
   if (failure) throw failure.reason;
   const databaseDone = performance.now();
+
+  if (quantity !== undefined) {
+    const labels = {common:t('Común','Common'),uncommon:t('No común','Uncommon'),rare:t('Súper raro','Super rare'),legendary:t('Legendario','Legendary'),mythical:t('Mítico','Mythical')};
+    const grouped = new Map();
+    for (const w of winners) {
+      const key = rarityFor(w.id);
+      if (!grouped.has(key)) grouped.set(key, new Map());
+      const group = grouped.get(key);
+      const entry = group.get(w.id) || {pokemon:w,count:0};
+      entry.count++;
+      group.set(w.id,entry);
+    }
+    const lines = [t(`<@${userId}> atrapó (${quantity} tiradas):`, `<@${userId}> caught (${quantity} rolls):`)];
+    for (const key of Object.keys(labels)) {
+      if (!grouped.has(key)) continue;
+      for (const {pokemon:w,count} of grouped.get(key).values()) {
+        const item = `${isNewMap.get(w.id)?badge+' ':''}${emojiMap.get(w.id)} ${capitalize(w.name)}${count>1?' x'+count:''}`;
+        const prefix = '~ '+labels[key]+': ';
+        if (lines[lines.length-1].startsWith(prefix) && lines[lines.length-1].length+item.length<1700) lines[lines.length-1] += ', '+item;
+        else lines.push(prefix+item);
+      }
+    }
+    if (!winners.length) lines.push(t('No has ganado ningún Pokémon.', 'You did not win any Pokémon.'));
+    let chunk = '';
+    let first = true;
+    for (const line of lines) {
+      if (chunk.length+line.length+1>1900) {
+        await (first?message.reply({content:chunk,allowedMentions:{parse:[]}}):message.channel.send({content:chunk,allowedMentions:{parse:[]}}));
+        first=false;chunk='';
+      }
+      chunk += (chunk?'\n':'')+line;
+    }
+    if(chunk) await (first?message.reply({content:chunk,allowedMentions:{parse:[]}}):message.channel.send({content:chunk,allowedMentions:{parse:[]}}));
+    console.log(JSON.stringify({event:'quick_roll_timing',quantity,winners:winners.length,totalMs:Math.round(performance.now()-started)}));
+    return;
+  }
 
   // 6. Texto del resultado con badge condicional
   let resultText;
@@ -182,4 +225,3 @@ async function executeRoll(message, providedSettings, started) {
 }
 
 module.exports = { rollPuzzle };
-

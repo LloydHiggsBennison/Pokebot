@@ -13,6 +13,45 @@ function rollModule(database, emojis, random = Math, baseline = false) {
   }, { Math: random });
 }
 
+test('12 quick rolls save all winners once and summarize duplicates without a grid',async()=>{
+  const {client}=fakeClient();
+  const emojis=loadModule('src/emojiManager.js');await emojis.initializeEmojis(client);
+  const db=fakeDatabase();let saves=0;
+  const save=db.addCaptures;db.addCaptures=async(...args)=>{saves++;return save(...args);};
+  const msg=fakeMessage(client);
+  const random=Object.create(Math);random.random=()=>0.85;
+  await rollModule(db,emojis,random).rollPuzzle(msg,null,12);
+  assert.equal(db.captures.length,24);
+  assert.equal(saves,1);
+  const text=msg.sent.map(x=>x[1].content).join('\n');
+  assert.match(text,/12 tiradas/);
+  assert.match(text,/x12/);
+  assert.doesNotMatch(text,/🔔|❌/);
+  assert.ok(msg.sent.every(x=>x[1].content.length<=2000));
+});
+
+test('invalid quick roll quantities never access the database or award captures',async()=>{
+  const {client}=fakeClient();const db=fakeDatabase();
+  db.getGuildSettings=()=>{throw Error('Unexpected DB access');};
+  const manager=rollModule(db,{});
+  for(const count of [0,-1,1.5,21,NaN,Infinity]){
+    const msg=fakeMessage(client);await manager.rollPuzzle(msg,null,count);
+    assert.match(msg.sent[0][1],/1 y 20/);
+  }
+  assert.equal(db.captures.length,0);
+});
+
+test('quick rolls share the normal roll cooldown',async()=>{
+  const {client}=fakeClient();
+  const emojis=loadModule('src/emojiManager.js');await emojis.initializeEmojis(client);
+  const db=fakeDatabase();db.settings.puzzle_cooldown_seconds=60;
+  const manager=rollModule(db,emojis,fixedRandom(0.5));
+  await manager.rollPuzzle(fakeMessage(client),null,12);
+  const msg=fakeMessage(client);await manager.rollPuzzle(msg);
+  assert.match(msg.sent[0][1],/Espera/);
+  assert.equal(db.captures.length,12);
+});
+
 test('English roll translates its result while keeping the exact Spanish grid',async()=>{
   const grids=[];
   for(const lang of ['es','en']){
@@ -129,4 +168,3 @@ test('image bytes equal original sharp processing', async () => {
   const after = loadModule('src/emojiManager.js');
   assert.deepEqual(await after.processPokemonSprite(sprite), originalBytes);
 });
-

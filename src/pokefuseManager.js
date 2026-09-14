@@ -34,8 +34,14 @@ function payload(session, token) {
   return { embeds: [embed], components: [new ActionRowBuilder().addComponents(select)], allowedMentions: { parse: [] } };
 }
 
-async function showFuse(message) {
+function normalizeName(name) {
+  return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/♀/g,'f').replace(/♂/g,'m').replace(/[^a-z0-9]/g,'');
+}
+
+async function showFuse(message, requestedName = '') {
   cleanup();
+  let directInteraction;
   const key = `${message.guild.id}:${message.author.id}`;
   if (running.has(key)) { await message.reply(t('⏳ Ya tienes una fusión en curso.', "⏳ You already have a fusion in progress.")); return; }
   running.add(key);
@@ -45,14 +51,29 @@ async function showFuse(message) {
       await message.reply(t('✨ Aún no tienes Pokémon normales con **x5**. Necesitas cinco copias iguales para fusionar.', "✨ You do not have **x5** regular Pokémon yet. You need five identical copies to fuse."));
       return;
     }
+    const selected = requestedName ? candidates.find(p => normalizeName(p.name) === normalizeName(requestedName)) : null;
+    if (requestedName && !selected) {
+      await message.reply(t('No tienes cinco copias normales de ese Pokémon, o el nombre no es válido. Usa `$pokefuse` para ver los disponibles.', 'You do not have five regular copies of that Pokémon, or the name is invalid. Use `$pokefuse` to see available species.'));
+      return;
+    }
     const token = randomBytes(12).toString('hex');
     for (const candidate of candidates) {
       try { candidate.emoji = getPreparedEmoji(message.guild.client, `pkv2_${candidate.id}`); } catch { candidate.emoji = '🔹'; }
     }
     sessions.set(token, { ownerId: message.author.id, guildId: message.guild.id, messageId: null, candidates, expires: Date.now() + SESSION_MS });
-    const sent = await message.reply(payload(sessions.get(token), token));
+    const sent = await message.reply(selected ? t('⏳ Preparando la fusión…','⏳ Preparing the fusion…') : payload(sessions.get(token), token));
     sessions.get(token).messageId = sent.id;
+    if (selected) {
+      directInteraction = {
+        customId:'pokefuse:'+token,values:[String(selected.id)],user:message.author,
+        guildId:message.guild.id,message:sent,
+        async deferUpdate(){this.deferred=true;},
+        editReply: data => sent.edit(data),
+        reply: data => message.reply({content:data.content,allowedMentions:{parse:[]}}),
+      };
+    }
   } finally { running.delete(key); }
+  if (directInteraction) await handleFuseSelect(directInteraction);
 }
 
 async function handleFuseSelect(interaction) {

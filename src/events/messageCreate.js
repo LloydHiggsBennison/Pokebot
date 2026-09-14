@@ -24,8 +24,17 @@ module.exports = {
       await require('../pokedexManager').showPokedex(message);
       return;
     }
-    if (content.toLowerCase() === '$pokefuse') {
-      await require('../pokefuseManager').showFuse(message);
+    if (/^\$pokefuse(?:\s|$)/i.test(content)) {
+      await require('../pokefuseManager').showFuse(message, content.slice(9).trim());
+      return;
+    }
+    const quick = content.match(/^\$p\s+([+-]?[\d.]+)(?:\s.*)?$/i);
+    if (quick) {
+      try { await rollPuzzle(message, null, Number(content.slice(2).trim())); }
+      catch (err) {
+        console.error('[$p quick]', err);
+        await message.reply(t('❌ No se pudo confirmar la tirada. Revisa tu Pokédex antes de repetirla.', '❌ Could not confirm the roll. Check your Pokédex before retrying.'));
+      }
       return;
     }
     // $p can report initialization immediately, even if the database is down.
@@ -55,4 +64,3 @@ module.exports = {
     await handleMessage(client, message, settings);
   },
 };
-

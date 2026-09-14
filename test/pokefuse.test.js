@@ -22,6 +22,22 @@ function fixture(animation = async () => Buffer.from('GIF89a')) {
   return { db, manager, message, interactions };
 }
 
+test('fusion by name skips menu and consumes only the requesting users copies',async()=>{
+  const f=fixture();
+  await f.manager.showFuse(f.message,'PIKACHU');
+  assert.match(f.interactions[0].payload.content,/Fusión completada/);
+  assert.equal(f.db.captures.filter(p=>p.userId==='owner'&&!p.isShiny).length,1);
+  assert.equal(f.db.captures.filter(p=>p.userId==='owner'&&p.isShiny).length,1);
+  assert.equal(f.db.captures.filter(p=>p.userId==='other').length,4);
+});
+
+test('unknown fusion name never consumes another species',async()=>{
+  const f=fixture();
+  await f.manager.showFuse(f.message,'charizard');
+  assert.equal(f.db.captures.filter(p=>p.userId==='owner').length,5);
+  assert.match(f.interactions[0].payload,/nombre no es válido/);
+});
+
 test('$pokefuse only offers normal species with five copies', async () => {
   const f = fixture();
   await f.manager.showFuse(f.message);

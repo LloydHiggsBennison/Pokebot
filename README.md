@@ -179,6 +179,18 @@ Esta presentación no requiere migraciones adicionales.
 
 ## Capturas salvajes, Pokécoins e idiomas
 
+### Atajos de tiradas y fusión
+
+- `$p`: conserva el grid habitual.
+- `$p 12`: ejecuta 12 tiradas y reúne los premios por rareza en un listado.
+  Acepta de 1 a 20; mantiene las probabilidades por tirada y aplica el cooldown
+  del servidor al lote completo. Los repetidos se agrupan como x2, x3, etc.
+- `$pokefuse charizard`: fusiona directamente esa especie si el usuario tiene
+  al menos cinco copias normales. Consume cuatro, conserva el original y entrega
+  un shiny con la misma animación y botón de repetición. Sin nombre abre el selector.
+
+Los atajos respetan el idioma español/inglés del usuario.
+
 Antes de desplegar esta versión, ejecuta `supabase_migration_wild_rewards.sql` en
 el SQL Editor, también si estás creando una instalación nueva con el esquema base.
 Requiere la clave **service_role** en el servidor del bot para las nuevas tablas
