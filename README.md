@@ -162,6 +162,19 @@ consume exactamente cuatro y registra una captura shiny. Las shiny no cuentan co
 ingredientes para otra fusión. El selector expira en cinco minutos y rechaza clics de
 otros usuarios, servidores o mensajes.
 
+Cada fusión confirmada muestra un GIF de 480×320 con 60 fotogramas: el original
+permanece a un lado, las otras cuatro copias se convierten en energía y aparece
+el sprite shiny de la misma especie entre destellos y estrellas. Dura unos siete
+segundos, se reproduce una vez y termina mostrando el shiny. Respeta español/inglés.
+La reproducción automática depende de los ajustes de imágenes de Discord.
+
+El GIF se genera después del guardado en un worker, con una caché de hasta 24 MB.
+Solo se renderiza una animación a la vez para limitar memoria/CPU. Si el renderer
+está ocupado, falla la descarga del sprite o se supera el tiempo de preparación,
+se muestra el sprite shiny estático y se confirma igualmente la fusión guardada.
+Un error de imagen nunca vuelve a consumir Pokémon ni anuncia que falló el guardado.
+Esta presentación no requiere migraciones adicionales.
+
 ## Capturas salvajes, Pokécoins e idiomas
 
 Antes de desplegar esta versión, ejecuta `supabase_migration_wild_rewards.sql` en

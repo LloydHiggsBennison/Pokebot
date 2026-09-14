@@ -3,6 +3,7 @@ const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, MessageFlags } 
 const { randomBytes } = require('node:crypto');
 const { getFuseCandidates, fusePokemon } = require('./database');
 const { getPreparedEmoji } = require('./emojiManager');
+const { getFusionAnimation } = require('./fusionAnimation');
 
 const SESSION_MS = 5 * 60 * 1000;
 const sessions = new Map();
@@ -78,8 +79,7 @@ async function handleFuseSelect(interaction) {
       return;
     }
     sessions.delete(token);
-    const emoji = candidate.emoji || '🔹';
-    await interaction.editReply({ content: t(`✨ **Fusión completada:** ${emoji} **${displayName(candidate.name)} shiny**\nSe consumieron 4 copias normales y recibiste 1 shiny; conservas tus copias normales restantes.`, `✨ **Fusion complete:** ${emoji} **${displayName(candidate.name)} shiny**\nConsumed 4 regular copies and received 1 shiny; you keep your remaining regular copies.`), embeds: [], components: [] });
+    await revealFusion(interaction,candidate);
   } catch (error) {
     sessions.delete(token);
     if (interaction.deferred) {
@@ -87,6 +87,27 @@ async function handleFuseSelect(interaction) {
     }
     throw error;
   } finally { running.delete(key); }
+}
+
+async function revealFusion(interaction,candidate) {
+  const name=displayName(candidate.name);
+  const content=t(`✨ **Fusión completada: ${name} shiny**\nSe consumieron 4 copias normales y recibiste 1 shiny; conservas tus copias normales restantes.`,`✨ **Fusion complete: ${name} shiny**\nConsumed 4 regular copies and received 1 shiny; you keep your remaining regular copies.`);
+  const shinyUrl='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/'+candidate.id+'.png';
+  try {
+    await interaction.editReply({content:t('⚡ Fusión guardada. Las cuatro copias están concentrando su energía…','⚡ Fusion saved. The four copies are concentrating their energy…'),embeds:[],components:[]});
+    const gif=await getFusionAnimation(candidate.id,name,t('es','en'));
+    const canAttach=gif && gif.length <= (interaction.attachmentSizeLimit || 7*1024*1024);
+    const embed=new EmbedBuilder().setColor(0xf4cf70)
+      .setTitle(t(`✨ ¡Ha nacido un ${name} shiny!`,`✨ A shiny ${name} is born!`))
+      .setImage(canAttach?'attachment://pokefuse.gif':shinyUrl)
+      .setFooter({text:t('El original permanece contigo · Shiny añadido a tu Pokédex','The original stays with you · Shiny added to your Pokédex')});
+    await interaction.editReply({content,embeds:[embed],components:[],files:canAttach?[{attachment:gif,name:'pokefuse.gif'}]:[]});
+  } catch(error) {
+    // The reward is already committed. A media/upload failure must never report a failed fusion.
+    console.error('[Pokefuse animation]',error.message);
+    try { await interaction.editReply({content,embeds:[],components:[],files:[]}); }
+    catch(deliveryError) { console.error('[Pokefuse confirmation]',deliveryError.message); }
+  }
 }
 
 module.exports = { showFuse, handleFuseSelect };

@@ -3,12 +3,13 @@ const assert = require('node:assert/strict');
 const { MessageFlags } = require('discord.js');
 const { loadModule, fakeMessage, fakeClient, fakeDatabase } = require('./helpers');
 
-function fixture() {
+function fixture(animation = async () => Buffer.from('GIF89a')) {
   const db = fakeDatabase();
   for (let i = 0; i < 5; i++) db.captures.push({ guildId: 'guild', userId: 'owner', id: 25, name: 'pikachu', isShiny: false });
   for (let i = 0; i < 4; i++) db.captures.push({ guildId: 'guild', userId: 'other', id: 25, name: 'pikachu', isShiny: false });
   const manager = loadModule('src/pokefuseManager.js', {
     './database': db,
+    './fusionAnimation': { getFusionAnimation: animation },
     './emojiManager': { getPreparedEmoji() { return '<:pkv2_25:123>'; } },
   });
   const client = fakeClient().client;
@@ -72,3 +73,34 @@ test('cannot fuse shiny copies as ingredients', async () => {
   assert.match(replies[0], /Aún no tienes/);
   assert.doesNotMatch(replies[0], /Pikachu/);
 });
+
+test('animation failure still confirms the saved shiny without consuming again',async()=>{
+  const f=fixture(async()=>{throw new Error('Sprite unavailable');});
+  await f.manager.showFuse(f.message);
+  const customId=f.interactions[0].payload.components[0].components[0].data.custom_id;
+  const i={customId,values:['25'],user:{id:'owner'},guildId:'guild',message:{id:'fuse-message'},
+    async deferUpdate(){this.deferred=true;},async editReply(p){this.updated=p;}};
+  await f.manager.handleFuseSelect(i);
+  assert.match(i.updated.content,/Fusión completada/);
+  assert.equal(f.db.captures.filter(p=>p.userId==='owner'&&p.isShiny).length,1);
+  assert.equal(f.db.captures.filter(p=>p.userId==='owner'&&!p.isShiny).length,1);
+});
+
+test('a failed save never plays the shiny animation',async()=>{
+  let renders=0;const f=fixture(async()=>{renders++;return Buffer.from('GIF89a');});
+  // Mutate before reloading the module so its destructured dependency is the failing write.
+  f.db.fusePokemon=async()=>{throw new Error('Database unavailable');};
+  const manager=loadModule('src/pokefuseManager.js',{
+    './database':f.db,'./emojiManager':{getPreparedEmoji:()=>''},
+    './fusionAnimation':{getFusionAnimation:async()=>{renders++;}},
+  });
+  await manager.showFuse(f.message);
+  const customId=f.interactions[0].payload.components[0].components[0].data.custom_id;
+  const i={customId,values:['25'],user:{id:'owner'},guildId:'guild',message:{id:'fuse-message'},
+    async deferUpdate(){this.deferred=true;},async editReply(p){this.updated=p;}};
+  await assert.rejects(manager.handleFuseSelect(i));
+  assert.equal(renders,0);
+  assert.equal(f.db.captures.filter(p=>p.userId==='owner').length,5);
+  assert.match(i.updated.content,/No se pudo confirmar/);
+});
+
