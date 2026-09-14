@@ -2,6 +2,12 @@ const { t } = require('../i18n');
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction, client) {
+    if(interaction.isButton?.() && interaction.customId.startsWith('pokefuse-open:')) {
+      await require('../pokefuseManager').openPrivateFuse(interaction); return;
+    }
+    if(interaction.isButton?.() && interaction.customId.startsWith('poketransfer:')) {
+      await require('../transferManager').handleTransfer(interaction); return;
+    }
     if (interaction.isButton?.() && interaction.customId.startsWith('pvw:')) {
       await require('../pokemonViewManager').handlePokemonView(interaction);
       return;

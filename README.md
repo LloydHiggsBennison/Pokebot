@@ -179,6 +179,30 @@ Esta presentación no requiere migraciones adicionales.
 
 ## Capturas salvajes, Pokécoins e idiomas
 
+### Colecciones de otros usuarios, regalos e intercambios
+
+- `$pokedex @usuario` muestra la colección de ese miembro del servidor.
+  Las flechas las controla quien abrió la consulta.
+- `$pokefuse` publica solo un botón para abrir la selección privada.
+  El menú y su resultado son efímeros: solo los ve quien lo abrió.
+  `$pokefuse nombre` sigue fusionando directamente.
+- `$pokegive @usuario pikachu` ofrece una copia al destinatario.
+- `$poketrade @usuario charizard / blastoise` ofrece tu Charizard por su Blastoise.
+  Puedes añadir `shiny` después de cualquiera de los nombres.
+
+El destinatario recibe una mención y acepta con `y`, `yes`, `sí` o el botón;
+rechaza con `n` o `no`. Solo se atienden respuestas en el mismo canal.
+Las ofertas expiran en 5 minutos y solo puede haber una pendiente por destinatario
+en cada canal. Ambos participantes deben ser miembros del servidor.
+Los regalos e intercambios no cuestan Pokécoins. Cada operación mueve una copia,
+conservando su variante y datos de captura; las copias no se reservan hasta aceptar.
+
+**Instalación:** ejecutar en Supabase SQL Editor el archivo
+`supabase/migrations/20260914210042_pokemon_transfers.sql` antes de usar
+`$pokegive` o `$poketrade`. La función atómica solo admite el rol del bot,
+bloquea las copias involucradas y conserva el ID de operación para evitar duplicados.
+SQLite crea su tabla de control automáticamente.
+
 ### Atajos de tiradas y fusión
 
 - `$p`: conserva el grid habitual.

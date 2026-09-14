@@ -7,3 +7,4 @@ pokebot.sqlite-wal
 
 # Sprites cacheados localmente (se descargan automáticamente en el servidor)
 data/sprites/
+supabase/.temp/

@@ -27,6 +27,16 @@ test('English pokedex translates pagination and owner-only errors',async()=>{
   assert.match(click.replied.content,/belongs to someone else/);
 });
 
+test('mentioned users collection is queried while navigation belongs to the viewer',async()=>{
+  const f=fixture();
+  await f.manager.showPokedex(f.message,{id:'target',username:'OtherTrainer'});
+  assert.deepEqual(f.reads,[['guild','target']]);
+  assert.equal(f.edits[0].embeds[0].data.author.name,'OtherTrainer');
+  const id=f.edits[0].components[0].components[1].data.custom_id;
+  const viewer=f.interaction(id);await f.manager.handlePokedexButton(viewer);assert.ok(viewer.updated);
+  const target=f.interaction(id,{user:{id:'target'}});await f.manager.handlePokedexButton(target);assert.ok(target.replied);
+});
+
 test('pokedex shows ten rows, counts, owner, thumbnail, totals and pages', async () => {
   const f = fixture();
   await f.manager.showPokedex(f.message);
@@ -93,4 +103,3 @@ test('expired sessions and forged page numbers respond privately', async () => {
   assert.match(expired.replied.content, /expiró/);
   assert.equal(expired.replied.flags, MessageFlags.Ephemeral);
 });
-

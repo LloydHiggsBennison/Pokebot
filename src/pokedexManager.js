@@ -35,7 +35,7 @@ function renderPage(session, token, page) {
   return { embeds: [embed], components: [buttons], allowedMentions: { parse: [] } };
 }
 
-async function showPokedex(message) {
+async function showPokedex(message, target = message.author) {
   const key = `${message.guild.id}:${message.author.id}`;
   if (pending.has(key)) {
     await message.reply({ content: t('Tu Pokédex se está cargando.', "Your Pokédex is loading."), allowedMentions: { repliedUser: false } });
@@ -46,7 +46,7 @@ async function showPokedex(message) {
   let token;
   try {
     sent = await message.reply({ content: t('📖 Cargando tu Pokédex…', "📖 Loading your Pokédex…"), allowedMentions: { repliedUser: false } });
-    const entries = await getPokedexEntries(message.guild.id, message.author.id);
+    const entries = await getPokedexEntries(message.guild.id, target.id);
     for (const entry of entries) {
       try { entry.emoji = getPreparedEmoji(message.guild.client, `pkv2_${entry.id}`); }
       catch { entry.emoji = '🔹'; } // Usable even while the emoji catalog is warming.
@@ -55,7 +55,7 @@ async function showPokedex(message) {
     if (sessions.size >= MAX_SESSIONS) sessions.delete(sessions.keys().next().value);
     token = randomBytes(12).toString('hex');
     const session = { ownerId: message.author.id, guildId: message.guild.id, messageId: sent.id,
-      username: message.author.username, avatar: message.author.displayAvatarURL?.(),
+      username: target.username, avatar: target.displayAvatarURL?.(),
       entries, expires: Date.now() + SESSION_MS };
     sessions.set(token, session);
     await sent.edit({ content: null, ...renderPage(session, token, 0), files: [{ attachment: thumbnail, name: 'pokedex.png' }] });
@@ -88,4 +88,3 @@ async function handlePokedexButton(interaction) {
 }
 
 module.exports = { showPokedex, handlePokedexButton };
-

@@ -39,7 +39,12 @@ function normalizeName(name) {
     .replace(/♀/g,'f').replace(/♂/g,'m').replace(/[^a-z0-9]/g,'');
 }
 
-async function showFuse(message, requestedName = '') {
+async function showFuse(message, requestedName = '', privateMenu = false) {
+  if(!requestedName && !privateMenu) {
+    return message.reply({content:t('✨ Abre tu selección de fusión privada.','✨ Open your private fusion selection.'),
+      components:[new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('pokefuse-open:'+message.author.id)
+        .setLabel(t('Abrir selección privada','Open private selection')).setStyle(ButtonStyle.Primary))],allowedMentions:{parse:[]}});
+  }
   cleanup();
   let directInteraction;
   const key = `${message.guild.id}:${message.author.id}`;
@@ -57,6 +62,7 @@ async function showFuse(message, requestedName = '') {
       return;
     }
     const token = randomBytes(12).toString('hex');
+    if(sessions.size>=200) sessions.delete(sessions.keys().next().value);
     for (const candidate of candidates) {
       try { candidate.emoji = getPreparedEmoji(message.guild.client, `pkv2_${candidate.id}`); } catch { candidate.emoji = '🔹'; }
     }
@@ -168,4 +174,12 @@ async function revealFusion(interaction,candidate,token) {
   }
 }
 
-module.exports = { showFuse, handleFuseSelect, handleFuseReplay };
+async function openPrivateFuse(interaction) {
+  if(interaction.customId.split(':')[1]!==interaction.user.id) {
+    return interaction.reply({content:t('Este botón pertenece a otra persona. Usa `$pokefuse`.','This button belongs to someone else. Use `$pokefuse`.'),flags:MessageFlags.Ephemeral});
+  }
+  await interaction.deferReply({flags:MessageFlags.Ephemeral});
+  await showFuse({author:interaction.user,guild:interaction.guild,
+    reply: data => interaction.editReply(typeof data==='string'?{content:data}:data)},'',true);
+}
+module.exports = { showFuse, handleFuseSelect, handleFuseReplay, openPrivateFuse };

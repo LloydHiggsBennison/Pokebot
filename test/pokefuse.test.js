@@ -22,6 +22,22 @@ function fixture(animation = async () => Buffer.from('GIF89a')) {
   return { db, manager, message, interactions };
 }
 
+test('text command exposes only a launcher and the actual menu is ephemeral and owner-only',async()=>{
+  const f=fixture();await f.manager.showFuse(f.message);
+  const launcher=f.interactions[0].payload;
+  assert.equal(launcher.embeds,undefined);
+  assert.equal(launcher.components[0].components[0].data.custom_id,'pokefuse-open:owner');
+  const other={customId:'pokefuse-open:owner',user:{id:'other'},async reply(p){this.response=p;}};
+  await f.manager.openPrivateFuse(other);assert.equal(other.response.flags,MessageFlags.Ephemeral);
+  const owner={customId:'pokefuse-open:owner',user:f.message.author,guild:f.message.guild,
+    async deferReply(p){this.flags=p.flags;},
+    async editReply(p){this.payload=p;return {id:'private-menu'};}};
+  await f.manager.openPrivateFuse(owner);
+  assert.equal(owner.flags,MessageFlags.Ephemeral);
+  assert.match(owner.payload.embeds[0].data.title,/Fusión/);
+  assert.equal(f.interactions.length,1);
+});
+
 test('fusion by name skips menu and consumes only the requesting users copies',async()=>{
   const f=fixture();
   await f.manager.showFuse(f.message,'PIKACHU');
@@ -40,7 +56,7 @@ test('unknown fusion name never consumes another species',async()=>{
 
 test('$pokefuse only offers normal species with five copies', async () => {
   const f = fixture();
-  await f.manager.showFuse(f.message);
+  await f.manager.showFuse(f.message, '', true);
   assert.equal(f.interactions.length, 1);
   const payload = f.interactions[0].payload;
   assert.match(payload.embeds[0].data.title, /Fusión/);
@@ -50,7 +66,7 @@ test('$pokefuse only offers normal species with five copies', async () => {
 
 test('fusion consumes exactly four normals and creates one shiny', async () => {
   const f = fixture();
-  await f.manager.showFuse(f.message);
+  await f.manager.showFuse(f.message, '', true);
   const token = f.interactions[0].payload.components[0].components[0].data.custom_id.split(':')[1];
   const interaction = { customId: `pokefuse:${token}`, values: ['25'], user: { id: 'owner' }, guildId: 'guild', message: { id: 'fuse-message' },
     async deferUpdate() { this.deferred = true; },
@@ -64,7 +80,7 @@ test('fusion consumes exactly four normals and creates one shiny', async () => {
 
 test('fusion selector is owner-only and duplicate clicks cannot consume twice', async () => {
   const f = fixture();
-  await f.manager.showFuse(f.message);
+  await f.manager.showFuse(f.message, '', true);
   const token = f.interactions[0].payload.components[0].components[0].data.custom_id.split(':')[1];
   const base = { customId: `pokefuse:${token}`, values: ['25'], guildId: 'guild', message: { id: 'fuse-message' }, async deferUpdate() { this.deferred = true; }, async editReply(p) { this.updated = p; }, async reply(p) { this.replied = p; } };
   const other = { ...base, user: { id: 'other' } };
@@ -85,14 +101,14 @@ test('cannot fuse shiny copies as ingredients', async () => {
   for (let i = 0; i < 10; i++) f.db.captures.push({ guildId: 'guild', userId: 'owner', id: 25, name: 'pikachu', isShiny: true });
   const replies = [];
   f.message.reply = async payload => { replies.push(payload); return { id: 'fuse-message' }; };
-  await f.manager.showFuse(f.message);
+  await f.manager.showFuse(f.message, '', true);
   assert.match(replies[0], /Aún no tienes/);
   assert.doesNotMatch(replies[0], /Pikachu/);
 });
 
 test('animation failure still confirms the saved shiny without consuming again',async()=>{
   const f=fixture(async()=>{throw new Error('Sprite unavailable');});
-  await f.manager.showFuse(f.message);
+  await f.manager.showFuse(f.message, '', true);
   const customId=f.interactions[0].payload.components[0].components[0].data.custom_id;
   const i={customId,values:['25'],user:{id:'owner'},guildId:'guild',message:{id:'fuse-message'},
     async deferUpdate(){this.deferred=true;},async editReply(p){this.updated=p;}};
@@ -110,7 +126,7 @@ test('a failed save never plays the shiny animation',async()=>{
     './database':f.db,'./emojiManager':{getPreparedEmoji:()=>''},
     './fusionAnimation':{getFusionAnimation:async()=>{renders++;}},
   });
-  await manager.showFuse(f.message);
+  await manager.showFuse(f.message, '', true);
   const customId=f.interactions[0].payload.components[0].components[0].data.custom_id;
   const i={customId,values:['25'],user:{id:'owner'},guildId:'guild',message:{id:'fuse-message'},
     async deferUpdate(){this.deferred=true;},async editReply(p){this.updated=p;}};
@@ -123,7 +139,7 @@ test('a failed save never plays the shiny animation',async()=>{
 test('animation retry is owner-only and never changes captures',async()=>{
   let renders=0;
   const f=fixture(async()=>++renders===1?null:Buffer.from('GIF89a'));
-  await f.manager.showFuse(f.message);
+  await f.manager.showFuse(f.message, '', true);
   const i={customId:f.interactions[0].payload.components[0].components[0].data.custom_id,
     values:['25'],user:{id:'owner'},guildId:'guild',message:{id:'fuse-message'},
     async deferUpdate(){this.deferred=true;},async editReply(p){this.updated=p;},async reply(p){this.replied=p;}};

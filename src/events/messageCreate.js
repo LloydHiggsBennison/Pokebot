@@ -9,6 +9,7 @@ module.exports = {
     if (message.author.bot || !message.guild) return;
 
     const content = message.content.trim();
+    if (/^(y|yes|si|sí|n|no)$/i.test(content) && await require('../transferManager').handleTransferReply(message)) return;
     if (/^\$p(?:k)?vw(?:\s|$)/i.test(content)) {
       return require('../pokemonViewManager').showPokemonView(message,content.replace(/^\$p(?:k)?vw\s*/i,''));
     }
@@ -23,8 +24,15 @@ module.exports = {
     }
     const mention=content.match(/^<@!?(\d+)>\s+catch(?:\s+(.*))?$/i);
     if(mention && mention[1]===client.user?.id) return require('../catchManager').catchWild(message,mention[2] || '');
-    if (content.toLowerCase() === '$pokedex') {
-      await require('../pokedexManager').showPokedex(message);
+    if (/^\$pokedex(?:\s|$)/i.test(content)) {
+      const argument=content.slice(8).trim();
+      const target=argument ? await require('../guildMembers').resolveMention(message.guild,argument) : message.author;
+      if(!target) return message.reply(t('Usa `$pokedex @usuario` con alguien de este servidor.','Use `$pokedex @user` with a member of this server.'));
+      await require('../pokedexManager').showPokedex(message,target);
+      return;
+    }
+    if (/^\$(poketrade|pokegive)(?:\s|$)/i.test(content)) {
+      await require('../transferManager').showTransfer(message,content);
       return;
     }
     if (/^\$pokefuse(?:\s|$)/i.test(content)) {
