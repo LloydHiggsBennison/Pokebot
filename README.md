@@ -169,9 +169,11 @@ segundos, se reproduce una vez y termina mostrando el shiny. Respeta español/in
 La reproducción automática depende de los ajustes de imágenes de Discord.
 
 El GIF se genera después del guardado en un worker, con una caché de hasta 24 MB.
-Solo se renderiza una animación a la vez para limitar memoria/CPU. Si el renderer
-está ocupado, falla la descarga del sprite o se supera el tiempo de preparación,
-se muestra el sprite shiny estático y se confirma igualmente la fusión guardada.
+Solo se renderiza una animación a la vez para limitar memoria/CPU; las demás esperan
+en una cola limitada. El worker informa su progreso y registra el motivo de cualquier
+fallo en Render (fusion_animation_failed). Si falla la preparación o el envío,
+se confirma la fusión guardada y se ofrece reintentar la animación durante 10 minutos.
+El botón pertenece al usuario de la fusión y nunca vuelve a ejecutar el guardado.
 Un error de imagen nunca vuelve a consumir Pokémon ni anuncia que falló el guardado.
 Esta presentación no requiere migraciones adicionales.
 
@@ -225,4 +227,3 @@ editar idiomas directamente en la base.
 
 Los nombres y descripciones del menú slash se traducen según el idioma de Discord,
 mediante sus localizaciones nativas; `npm run deploy` actualiza ese menú.
-

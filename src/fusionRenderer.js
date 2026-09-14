@@ -1,4 +1,5 @@
 const sharp = require('sharp');
+const { GIFEncoder, quantize } = require('gifenc');
 const { fetchWithTimeout } = require('./network');
 const WIDTH=480, HEIGHT=320, FRAMES=60;
 const escape = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
@@ -79,17 +80,44 @@ function frameSvg(frame,normal,shiny,name,language) {
     '<rect x="22" y="303" width="'+(436*Math.min(1,frame/45))+'" height="2" rx="1" fill="url(#line)"/></svg>';
   return s;
 }
-async function renderAnimation({id,name,language='es',sprites}) {
+async function renderAnimation({id,name,language='es',sprites,onProgress=()=>{}}) {
   if(!Number.isInteger(id)||id<1||id>1025)throw new Error('Invalid species');
+  onProgress('sprites');
   const [normal,shiny]=sprites || await Promise.all([loadSprite(id,false),loadSprite(id,true)]);
   const frames=[];
   for(let f=0;f<FRAMES;f++) {
+    if(f%10===0)onProgress('frames',f);
     frames.push(await sharp(Buffer.from(frameSvg(f,normal,shiny,name,language))).ensureAlpha().raw().toBuffer());
   }
-  const gif=await sharp(Buffer.concat(frames),{raw:{width:WIDTH,height:HEIGHT*FRAMES,channels:4,pageHeight:HEIGHT}})
-    .gif({loop:1,delay:Array.from({length:FRAMES},(_,i)=>i===FRAMES-1?2500:80),colours:128,effort:3,dither:0.2}).toBuffer();
+  onProgress('encoding');
+  // A single sampled palette avoids expensive full-animation quantization on Render.
+  const palette=quantize(Buffer.concat([frames[0],frames[30],frames[40],frames[59]]),128);
+  const colors=new Int16Array(32768).fill(-1);
+  const encoder=GIFEncoder();
+  for(let frame=0;frame<FRAMES;frame++) {
+    if(frame%10===0)onProgress('encoding',frame);
+    const rgba=frames[frame],indexed=new Uint8Array(WIDTH*HEIGHT);
+    for(let p=0,offset=0;p<indexed.length;p++,offset+=4) {
+      const r=rgba[offset],g=rgba[offset+1],b=rgba[offset+2];
+      const key=((r>>3)<<10)|((g>>3)<<5)|(b>>3);
+      let index=colors[key];
+      if(index<0) {
+        let best=Infinity;
+        for(let c=0;c<palette.length;c++) {
+          const color=palette[c],distance=(r-color[0])**2+(g-color[1])**2+(b-color[2])**2;
+          if(distance<best){best=distance;index=c;}
+        }
+        colors[key]=index;
+      }
+      indexed[p]=index;
+    }
+    encoder.writeFrame(indexed,WIDTH,HEIGHT,{palette:frame===0?palette:undefined,repeat:-1,delay:frame===FRAMES-1?2500:80});
+    frames[frame]=null;
+  }
+  encoder.finish();
+  const gif=Buffer.from(encoder.bytesView());
+  onProgress('complete');
   if(gif.length>7*1024*1024)throw new Error('Animation exceeds upload budget');
   return gif;
 }
 module.exports={renderAnimation,frameSvg,spriteUrl,WIDTH,HEIGHT,FRAMES};
-

@@ -43,7 +43,7 @@ test('fusion consumes exactly four normals and creates one shiny', async () => {
   assert.equal(f.db.captures.filter(p => p.guildId === 'guild' && p.userId === 'owner' && p.id === 25 && !p.isShiny).length, 1);
   assert.equal(f.db.captures.filter(p => p.guildId === 'guild' && p.userId === 'owner' && p.id === 25 && p.isShiny).length, 1);
   assert.match(interaction.updated.content, /consumieron 4/);
-  assert.equal(interaction.updated.components.length, 0);
+  assert.equal(interaction.updated.components.length, 1);
 });
 
 test('fusion selector is owner-only and duplicate clicks cannot consume twice', async () => {
@@ -104,3 +104,24 @@ test('a failed save never plays the shiny animation',async()=>{
   assert.match(i.updated.content,/No se pudo confirmar/);
 });
 
+test('animation retry is owner-only and never changes captures',async()=>{
+  let renders=0;
+  const f=fixture(async()=>++renders===1?null:Buffer.from('GIF89a'));
+  await f.manager.showFuse(f.message);
+  const i={customId:f.interactions[0].payload.components[0].components[0].data.custom_id,
+    values:['25'],user:{id:'owner'},guildId:'guild',message:{id:'fuse-message'},
+    async deferUpdate(){this.deferred=true;},async editReply(p){this.updated=p;},async reply(p){this.replied=p;}};
+  await f.manager.handleFuseSelect(i);
+  assert.match(i.updated.content,/No se pudo mostrar/);
+  const customId=i.updated.components[0].components[0].data.custom_id;
+  const saved=JSON.stringify(f.db.captures);
+  const other={...i,customId,user:{id:'other'},deferred:false};
+  await f.manager.handleFuseReplay(other);
+  assert.equal(other.replied.flags,MessageFlags.Ephemeral);
+  assert.equal(renders,1);
+  const owner={...i,customId,deferred:false};
+  await f.manager.handleFuseReplay(owner);
+  assert.equal(renders,2);
+  assert.equal(owner.updated.files[0].name,'pokefuse.gif');
+  assert.equal(JSON.stringify(f.db.captures),saved);
+});

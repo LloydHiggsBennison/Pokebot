@@ -1,5 +1,5 @@
 const { t } = require('./i18n');
-const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, MessageFlags } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
 const { randomBytes } = require('node:crypto');
 const { getFuseCandidates, fusePokemon } = require('./database');
 const { getPreparedEmoji } = require('./emojiManager');
@@ -7,10 +7,12 @@ const { getFusionAnimation } = require('./fusionAnimation');
 
 const SESSION_MS = 5 * 60 * 1000;
 const sessions = new Map();
+const receipts = new Map();
 const running = new Set();
 
 function cleanup() {
   for (const [token, session] of sessions) if (session.expires <= Date.now()) sessions.delete(token);
+  for (const [token, receipt] of receipts) if (receipt.expires <= Date.now()) receipts.delete(token);
 }
 setInterval(cleanup, 60000).unref();
 
@@ -89,26 +91,60 @@ async function handleFuseSelect(interaction) {
   } finally { running.delete(key); }
 }
 
-async function revealFusion(interaction,candidate) {
+async function handleFuseReplay(interaction) {
+  cleanup();
+  const token = interaction.customId.split(':')[1];
+  const receipt = receipts.get(token);
+  if (!receipt) {
+    await interaction.reply({content:t('Este botón expiró. Tu shiny sigue guardado.','This button expired. Your shiny is still saved.'),flags:MessageFlags.Ephemeral});
+    return;
+  }
+  if (interaction.user.id !== receipt.ownerId || interaction.guildId !== receipt.guildId || interaction.message.id !== receipt.messageId) {
+    await interaction.reply({content:t('Esta animación pertenece a otra persona.','This animation belongs to someone else.'),flags:MessageFlags.Ephemeral});
+    return;
+  }
+  const key = receipt.guildId+':'+receipt.ownerId;
+  if (running.has(key)) {
+    await interaction.reply({content:t('⏳ La animación se está preparando.','⏳ The animation is being prepared.'),flags:MessageFlags.Ephemeral});
+    return;
+  }
+  running.add(key);
+  try {
+    await interaction.deferUpdate();
+    await revealFusion(interaction,receipt.candidate,token);
+  } finally { running.delete(key); }
+}
+
+async function revealFusion(interaction,candidate,token) {
+  if (!token) {
+    token=randomBytes(12).toString('hex');
+    cleanup();
+    if(receipts.size>=200) receipts.delete(receipts.keys().next().value);
+    receipts.set(token,{ownerId:interaction.user.id,guildId:interaction.guildId,messageId:interaction.message.id,candidate,expires:Date.now()+10*60*1000});
+  }
+  const buttons = success => [new ActionRowBuilder().addComponents(new ButtonBuilder()
+    .setCustomId('pokefuse-replay:'+token).setStyle(ButtonStyle.Secondary)
+    .setLabel(success?t('Volver a ver','Replay'):t('Reintentar animación','Retry animation')).setEmoji('✨'))];
+  const mediaFailure=t('\n⚠️ No se pudo mostrar la animación. Puedes reintentar durante 10 minutos sin consumir Pokémon.','\n⚠️ The animation could not be shown. You can retry for 10 minutes without consuming Pokémon.');
   const name=displayName(candidate.name);
   const content=t(`✨ **Fusión completada: ${name} shiny**\nSe consumieron 4 copias normales y recibiste 1 shiny; conservas tus copias normales restantes.`,`✨ **Fusion complete: ${name} shiny**\nConsumed 4 regular copies and received 1 shiny; you keep your remaining regular copies.`);
   const shinyUrl='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/'+candidate.id+'.png';
   try {
-    await interaction.editReply({content:t('⚡ Fusión guardada. Las cuatro copias están concentrando su energía…','⚡ Fusion saved. The four copies are concentrating their energy…'),embeds:[],components:[]});
+    await interaction.editReply({content:t('⚡ Fusión guardada. Las cuatro copias están concentrando su energía…','⚡ Fusion saved. The four copies are concentrating their energy…'),embeds:[],components:[],attachments:[]});
     const gif=await getFusionAnimation(candidate.id,name,t('es','en'));
     const canAttach=gif && gif.length <= (interaction.attachmentSizeLimit || 7*1024*1024);
+    if(gif && !canAttach) console.warn('[Pokefuse animation] GIF exceeds attachment limit:',gif.length,interaction.attachmentSizeLimit);
     const embed=new EmbedBuilder().setColor(0xf4cf70)
       .setTitle(t(`✨ ¡Ha nacido un ${name} shiny!`,`✨ A shiny ${name} is born!`))
       .setImage(canAttach?'attachment://pokefuse.gif':shinyUrl)
       .setFooter({text:t('El original permanece contigo · Shiny añadido a tu Pokédex','The original stays with you · Shiny added to your Pokédex')});
-    await interaction.editReply({content,embeds:[embed],components:[],files:canAttach?[{attachment:gif,name:'pokefuse.gif'}]:[]});
+    await interaction.editReply({content:content+(canAttach?'':mediaFailure),embeds:[embed],components:buttons(canAttach),attachments:[],files:canAttach?[{attachment:gif,name:'pokefuse.gif'}]:[]});
   } catch(error) {
     // The reward is already committed. A media/upload failure must never report a failed fusion.
     console.error('[Pokefuse animation]',error.message);
-    try { await interaction.editReply({content,embeds:[],components:[],files:[]}); }
+    try { await interaction.editReply({content:content+mediaFailure,embeds:[],components:buttons(false),attachments:[],files:[]}); }
     catch(deliveryError) { console.error('[Pokefuse confirmation]',deliveryError.message); }
   }
 }
 
-module.exports = { showFuse, handleFuseSelect };
-
+module.exports = { showFuse, handleFuseSelect, handleFuseReplay };
