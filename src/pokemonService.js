@@ -1,6 +1,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { fetchWithTimeout } = require('./network');
+const { selectPokemon } = require('./pokemonSelection');
 const POKEMON_LIST = require('../data/pokemon.json');
 const pokemonById = new Map(POKEMON_LIST.map(p => [p.id, p]));
 const SPRITES_DIR = path.join(__dirname, '..', 'data', 'sprites');
@@ -41,16 +42,11 @@ async function fetchSinglePokemonWithSprite(id) {
 }
 
 async function getRandomPokemonBatch(count) {
-  const shuffled = [...POKEMON_LIST];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return Promise.all(shuffled.slice(0, count).map(p => fetchSinglePokemonWithSprite(p.id)));
+  return Promise.all(selectPokemon(count).map(p => fetchSinglePokemonWithSprite(p.id)));
 }
 
 function getRandomPokemon() {
-  const pokemon = POKEMON_LIST[Math.floor(Math.random() * POKEMON_LIST.length)];
+  const [pokemon] = selectPokemon();
   return { ...pokemon, image: pokemon.spriteUrl };
 }
 

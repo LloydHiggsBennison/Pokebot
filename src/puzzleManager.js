@@ -4,6 +4,7 @@ const { takeFromPool } = require('./pokemonPool');
 const { getGuildSettings, getLastRoll, setLastRoll, addCaptures, hasCapture } = require('./database');
 const { getNewBadgeEmoji } = require('./badgeManager');
 const { rarityFor } = require('./wildRewards');
+const { rollShiny } = require('./rollShiny');
 
 const NUM_ROWS = 5;
 const BELL  = '🔔';
@@ -109,7 +110,7 @@ async function executeRoll(message, providedSettings, started, quantity) {
     if (winnerRowIndices.has(r)) {
       const w = next();
       rows.push({ items: [w, w, w], isWinner: true });
-      winners.push(w);
+      winners.push({...w,isShiny:rollShiny()});
     } else {
       let p1 = next(), p2 = next(), p3 = next();
       if (p1.id === p2.id && p2.id === p3.id) { poolIdx++; p3 = next(); }
@@ -165,15 +166,16 @@ async function executeRoll(message, providedSettings, started, quantity) {
       const key = rarityFor(w.id);
       if (!grouped.has(key)) grouped.set(key, new Map());
       const group = grouped.get(key);
-      const entry = group.get(w.id) || {pokemon:w,count:0};
+      const variantKey = w.id+':'+(w.isShiny?1:0);
+      const entry = group.get(variantKey) || {pokemon:w,count:0};
       entry.count++;
-      group.set(w.id,entry);
+      group.set(variantKey,entry);
     }
     const lines = [t(`<@${userId}> atrapó (${quantity} tiradas):`, `<@${userId}> caught (${quantity} rolls):`)];
     for (const key of Object.keys(labels)) {
       if (!grouped.has(key)) continue;
       for (const {pokemon:w,count} of grouped.get(key).values()) {
-        const item = `${isNewMap.get(w.id)?badge+' ':''}${emojiMap.get(w.id)} ${capitalize(w.name)}${count>1?' x'+count:''}`;
+        const item = `${isNewMap.get(w.id)?badge+' ':''}${w.isShiny?'✨ ':''}${emojiMap.get(w.id)} ${capitalize(w.name)}${w.isShiny?' shiny':''}${count>1?' x'+count:''}`;
         const prefix = '~ '+labels[key]+': ';
         if (lines[lines.length-1].startsWith(prefix) && lines[lines.length-1].length+item.length<1700) lines[lines.length-1] += ', '+item;
         else lines.push(prefix+item);
@@ -202,12 +204,13 @@ async function executeRoll(message, providedSettings, started, quantity) {
     const w = winners[0];
     const e = emojiMap.get(w.id) || '';
     const b = isNewMap.get(w.id) ? `${badge} ` : '';
-    resultText = t(`${username}: ${b}${e} Has ganado un **${capitalize(w.name)}**`, `${username}: ${b}${e} You won a **${capitalize(w.name)}**`);
+    const label = (w.isShiny?'✨ ':'')+capitalize(w.name)+(w.isShiny?' shiny':'');
+    resultText = t(`${username}: ${b}${e} Has ganado un **${label}**`, `${username}: ${b}${e} You won a **${label}**`);
   } else {
     const names = winners.map(w => {
       const e = emojiMap.get(w.id) || '';
       const b = isNewMap.get(w.id) ? `${badge} ` : '';
-      return `${b}${e} **${capitalize(w.name)}**`;
+      return `${b}${e} **${w.isShiny?'✨ ':''}${capitalize(w.name)}${w.isShiny?' shiny':''}**`;
     }).join(', ');
     resultText = t(`${username}: Has ganado ${winners.length} Pokémon: ${names}`, `${username}: You won ${winners.length} Pokémon: ${names}`);
   }

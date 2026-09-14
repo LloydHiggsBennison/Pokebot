@@ -125,6 +125,18 @@ test('real Supabase SDK: failed reads/writes reject without retries or cached de
   assert.equal((await db.getGuildSettings('g')).catch_command, '$p');
 });
 
+test('Supabase bulk rewards preserve normal and shiny variants in the personal pokedex',async()=>{
+  const {db,requests}=supabaseFixture();
+  await db.addCaptures('g','u',[{id:6,name:'charizard'},{id:6,name:'charizard',isShiny:true}]);
+  assert.equal(requests[0].body[0].is_shiny,0);
+  assert.equal(requests[0].body[1].is_shiny,1);
+  const entries=await db.getPokedexEntries('g','u');
+  assert.equal(entries.length,2);
+  assert.equal(entries.find(p=>p.isShiny).count,1);
+  assert.equal(entries.find(p=>!p.isShiny).count,1);
+  assert.equal((await db.getPokedexEntries('g','other')).length,0);
+});
+
 test('SQLite queries execute on a real in-memory SQLite engine (node:sqlite adapter)', async () => {
   const { DatabaseSync } = require('node:sqlite');
   let connection;

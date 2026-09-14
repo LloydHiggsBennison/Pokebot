@@ -191,6 +191,31 @@ Esta presentación no requiere migraciones adicionales.
 
 Los atajos respetan el idioma español/inglés del usuario.
 
+### Rareza y galería personal
+
+Las selecciones de especie usan probabilidades por categoría: común 80%, no común
+17%, súper raro 2,5%, legendario 0,4% y mítico 0,1%. Se aplican a `$p`,
+`$p número` y apariciones salvajes. Cada selección elige primero la rareza y luego
+una especie de esa categoría. No se repiten especies dentro del pool de un grid;
+las probabilidades se renormalizan si una categoría se agota. La cantidad de
+premios por tirada y el diseño del grid permanecen iguales.
+
+`$pkvw charizard` (alias `$pvw charizard`) abre una ficha vertical de tus copias
+normales y shiny, con nombre, rareza, entrenador y cantidad de copias arriba, y
+una imagen grande debajo. Usa 👈/👉 para cambiar entre GIF, ilustración, HOME
+y sprites disponibles. El GIF aparece primero cuando existe.
+`$pkvw charizard shiny` muestra únicamente la variante shiny que tengas.
+Solo el propietario puede manejar las páginas; expiran en 10 minutos.
+Las imágenes se obtienen de PokéAPI con caché y un límite de espera de 4 segundos.
+Si el proveedor falla se muestra el sprite estático. No todas las especies tienen
+GIF; solo se incluyen variantes que el usuario posee en ese servidor.
+
+Cada Pokémon ganado en `$p` o `$p número` tiene una probabilidad independiente
+de 0,01% (1 entre 10.000) de ser shiny. Se guarda como shiny y aparece marcado
+con ✨ en el resultado; normales y shiny se contabilizan por separado.
+El grid mantiene sus emojis habituales. Esta tasa no cambia las fusiones ni las
+apariciones salvajes.
+
 Antes de desplegar esta versión, ejecuta `supabase_migration_wild_rewards.sql` en
 el SQL Editor, también si estás creando una instalación nueva con el esquema base.
 Requiere la clave **service_role** en el servidor del bot para las nuevas tablas

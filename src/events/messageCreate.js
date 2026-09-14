@@ -9,6 +9,9 @@ module.exports = {
     if (message.author.bot || !message.guild) return;
 
     const content = message.content.trim();
+    if (/^\$p(?:k)?vw(?:\s|$)/i.test(content)) {
+      return require('../pokemonViewManager').showPokemonView(message,content.replace(/^\$p(?:k)?vw\s*/i,''));
+    }
     if (/^\$(idioma|language)(\s+(servidor|server))?$/i.test(content)) {
       return require('../languageManager').showLanguage(message, /\s/.test(content));
     }

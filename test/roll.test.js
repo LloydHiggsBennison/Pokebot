@@ -7,6 +7,7 @@ const { loadModule, fakeClient, fakeMessage, fakeDatabase, fixedRandom, POKEMON_
 function rollModule(database, emojis, random = Math, baseline = false) {
   return loadModule(baseline ? 'test/fixtures/puzzle-before.js' : 'src/puzzleManager.js', {
     './database': database,
+    './rollShiny': { rollShiny: () => false },
     './pokemonPool': { takeFromPool: () => POKEMON_LIST.slice(0, 15) },
     './emojiManager': emojis,
     './badgeManager': { getNewBadgeEmoji: guild => emojis.getPreparedEmoji(guild.client, 'pk_new') },

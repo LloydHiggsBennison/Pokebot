@@ -2,6 +2,10 @@ const { t } = require('../i18n');
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction, client) {
+    if (interaction.isButton?.() && interaction.customId.startsWith('pvw:')) {
+      await require('../pokemonViewManager').handlePokemonView(interaction);
+      return;
+    }
     if (interaction.isButton?.() && interaction.customId.startsWith('pokefuse-replay:')) {
       try { await require('../pokefuseManager').handleFuseReplay(interaction); }
       catch (error) { console.error('[Pokefuse replay]', error.message); }
