@@ -109,7 +109,7 @@ async function startTimeSpawner(client, guildId) {
   }
 
   const settings = await getGuildSettings(guildId);
-  if ((settings.mode !== 'time' && settings.mode !== 'both') || !settings.spawn_channel_id) {
+  if (!settings.enabled || (settings.mode !== 'time' && settings.mode !== 'both') || !settings.spawn_channel_id) {
     return;
   }
 
@@ -131,4 +131,3 @@ function restartTimeSpawner(client, guildId) {
 }
 
 module.exports = { handleMessage, tryCatch, reserveCatch, finishCatch, startTimeSpawner, restartTimeSpawner, getState, spawnPokemon };
-
