@@ -6,7 +6,8 @@ const { withLanguage } = require('../src/i18n');
 function fixture(count = 21) {
   let now = Date.now();
   const reads = [], edits = [];
-  const entries = Array.from({ length: count }, (_, i) => ({ id: i + 1, name: `pokemon${i+1}`, count: i === 0 ? 2 : 1 }));
+  const entries = Array.from({ length: count }, (_, i) => ({ id: i + 1, name: `pokemon${i+1}`, count: i === 0 ? 2 : 1,
+    copies:[{id:i+1,pokemon_id:i+1,level:10,iv_total:186}] }));
   const manager = loadModule('src/pokedexManager.js', {
     './database': { async getPokedexEntries(g,u) { reads.push([g,u]); return entries.map(p => ({ ...p })); } },
     './emojiManager': { getPreparedEmoji(client, name) { return `<:${name}:123456789012345678>`; } },
@@ -15,7 +16,7 @@ function fixture(count = 21) {
     async reply() { return { id: 'message', async edit(payload) { edits.push(payload); } }; } };
   const interaction = (customId, overrides = {}) => ({ customId, user: { id: 'owner' }, guildId: 'guild', message: { id: 'message' },
     async update(p) { this.updated = p; }, async reply(p) { this.replied = p; }, ...overrides });
-  return { manager, message, reads, edits, interaction, expire() { now += 600001; } };
+  return { manager, message, reads, edits, interaction, entries, expire() { now += 600001; } };
 }
 
 test('English pokedex translates pagination and owner-only errors',async()=>{
@@ -84,10 +85,27 @@ test('empty and single-page collections have disabled navigation', async () => {
   for (const count of [0, 1, 10]) {
     const f = fixture(count);
     await f.manager.showPokedex(f.message);
-    assert.ok(f.edits[0].components[0].toJSON().components.every(c => c.disabled));
-    assert.equal(new Set(f.edits[0].components[0].toJSON().components.map(c => c.custom_id)).size, 2);
+    assert.ok(f.edits[0].components[0].toJSON().components.slice(0,2).every(c => c.disabled));
+    assert.equal(new Set(f.edits[0].components[0].toJSON().components.map(c => c.custom_id)).size, 3);
     if (!count) assert.match(f.edits[0].embeds[0].data.description, /Todavía no/);
   }
+});
+
+test('pokedex sorts regular and shiny groups alphabetically and shows exact copy IVs',async()=>{
+  const f=fixture(4);
+  Object.assign(f.entries[0],{name:'zubat',isShiny:true});
+  Object.assign(f.entries[1],{name:'absol',isShiny:true});
+  Object.assign(f.entries[2],{name:'zubat',isShiny:false});
+  Object.assign(f.entries[3],{name:'absol',isShiny:false});
+  await f.manager.showPokedex(f.message);
+  const lines=f.edits[0].embeds[0].data.description.split('\n');
+  assert.match(lines[0],/Absol/);assert.match(lines[1],/Zubat/);
+  assert.match(lines[2],/^✨ .*Absol/);assert.match(lines[3],/^✨ .*Zubat/);
+  const click=f.interaction(f.edits[0].components[0].components[2].data.custom_id);
+  await f.manager.handlePokedexButton(click);
+  assert.match(click.updated.embeds[0].data.description,/#4 · Lv. 10 · \*\*IV 100.00%/);
+  assert.match(click.updated.embeds[0].data.description,/HP 31 · ATK 31 · DEF 31 · SpA 31 · SpD 31 · SPE 31/);
+  assert.equal(f.reads.length,1);
 });
 
 test('expired sessions and forged page numbers respond privately', async () => {

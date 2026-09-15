@@ -235,13 +235,22 @@ async function getUserCaptures(guildId, userId) {
 // USER ROLLS COOLDOWN
 // ----------------------------------------------------
 // Snapshot by capture ID: no Supabase row-limit truncation or endlessly growing scan.
-async function getPokedexEntries(guildId, userId) {
-  if (!useSupabase) {
+async function getPokedexEntries(guildId, userId, { includeCopies = false } = {}) {
+  if (!useSupabase && !includeCopies) {
     return db.prepare(`SELECT pokemon_id AS id, pokemon_name AS name, is_shiny AS isShiny, COUNT(*) AS count
       FROM captures WHERE guild_id = ? AND user_id = ?
       GROUP BY pokemon_id, pokemon_name, is_shiny ORDER BY MIN(id)`).all(guildId, userId);
   }
-  const scoped = () => supabase.from('captures').select('id,pokemon_id,pokemon_name,is_shiny')
+  if (!useSupabase) {
+    const entries = new Map();
+    for (const copy of db.prepare('SELECT * FROM captures WHERE guild_id = ? AND user_id = ? ORDER BY id').all(guildId,userId)) {
+      const key = `${copy.pokemon_id}:${copy.is_shiny ? 1 : 0}`;
+      if (!entries.has(key)) entries.set(key,{id:copy.pokemon_id,name:copy.pokemon_name,isShiny:!!copy.is_shiny,count:0,copies:[]});
+      const entry=entries.get(key);entry.count++;entry.copies.push(copy);
+    }
+    return [...entries.values()];
+  }
+  const scoped = () => supabase.from('captures').select(includeCopies ? 'id,pokemon_id,pokemon_name,is_shiny,level,iv_total,experience' : 'id,pokemon_id,pokemon_name,is_shiny')
     .eq('guild_id', guildId).eq('user_id', userId);
   const { data: latest, error: latestError } = await scoped().order('id', { ascending: false }).limit(1);
   if (latestError) throw latestError;
@@ -259,6 +268,9 @@ async function getPokedexEntries(guildId, userId) {
       const existing = entries.get(key);
       if (existing) existing.count++;
       else entries.set(key, { id: capture.pokemon_id, name: capture.pokemon_name, isShiny: !!capture.is_shiny, count: 1 });
+      if (includeCopies) {
+        const entry=entries.get(key);entry.copies ||= [];entry.copies.push(capture);
+      }
     }
     const next = data[data.length - 1].id;
     if (BigInt(next) <= BigInt(cursor)) throw new Error('La consulta de Pokédex no avanzó.');
@@ -362,4 +374,3 @@ module.exports = {
   getLastRoll,
   setLastRoll,
 };
-

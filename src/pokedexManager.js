@@ -5,6 +5,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags
 const { getPokedexEntries } = require('./database');
 const { getPreparedEmoji } = require('./emojiManager');
 const { POKEMON_LIST } = require('./pokemonService');
+const { stats } = require('./battleEngine');
 const PAGE_SIZE = 10;
 const SESSION_MS = 10 * 60 * 1000;
 const MAX_SESSIONS = 200;
@@ -18,10 +19,15 @@ function cleanup() {
 const sweep = setInterval(cleanup, 60000);
 sweep.unref();
 
-function renderPage(session, token, page) {
-  const pages = Math.max(1, Math.ceil(session.entries.length / PAGE_SIZE));
-  const description = session.entries.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(p => {
+function renderPage(session, token, page, mode = 'list') {
+  const rows = mode === 'iv' ? session.entries.flatMap(entry => (entry.copies || []).map(copy=>({...entry,copy}))) : session.entries;
+  const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const description = rows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(p => {
     const name = escapeMarkdown(p.name.charAt(0).toUpperCase() + p.name.slice(1));
+    if (mode === 'iv') {
+      const a=stats(p.copy),total=a.iv.reduce((sum,n)=>sum+n,0);
+      return `${p.isShiny ? '✨ ' : ''}${p.emoji} **${name}** · #${p.copy.id} · Lv. ${a.level} · **IV ${(total/186*100).toFixed(2)}%**\nHP ${a.iv[0]} · ATK ${a.iv[1]} · DEF ${a.iv[2]} · SpA ${a.iv[3]} · SpD ${a.iv[4]} · SPE ${a.iv[5]}`;
+    }
     return `${p.isShiny ? '✨ ' : ''}${p.emoji} ${name}${p.count > 1 ? ` x${p.count}` : ''}`;
   }).join('\n') || t('Todavía no has capturado Pokémon. Usa `$p` para empezar tu colección.', "You have not caught any Pokémon yet. Use `$p` to start your collection.");
   const embed = new EmbedBuilder().setColor(0xffcb05)
@@ -29,8 +35,9 @@ function renderPage(session, token, page) {
     .setThumbnail('attachment://pokedex.png').setDescription(description)
     .setFooter({ text: t(`${new Set(session.entries.map(entry => entry.id)).size} / ${POKEMON_LIST.length.toLocaleString('es-CL')} - Página ${page + 1} / ${pages}`, `${new Set(session.entries.map(entry => entry.id)).size} / ${POKEMON_LIST.length.toLocaleString('en-US')} - Page ${page + 1} / ${pages}`) });
   const buttons = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId(`pokedex:${token}:${(page + pages - 1) % pages}:prev`).setEmoji('👈').setStyle(ButtonStyle.Secondary).setDisabled(pages === 1),
-    new ButtonBuilder().setCustomId(`pokedex:${token}:${(page + 1) % pages}:next`).setEmoji('👉').setStyle(ButtonStyle.Secondary).setDisabled(pages === 1),
+    new ButtonBuilder().setCustomId(`pokedex:${token}:${(page + pages - 1) % pages}:prev:${mode}`).setEmoji('👈').setStyle(ButtonStyle.Secondary).setDisabled(pages === 1),
+    new ButtonBuilder().setCustomId(`pokedex:${token}:${(page + 1) % pages}:next:${mode}`).setEmoji('👉').setStyle(ButtonStyle.Secondary).setDisabled(pages === 1),
+    new ButtonBuilder().setCustomId(`pokedex:${token}:0:toggle:${mode === 'iv' ? 'list' : 'iv'}`).setLabel(mode === 'iv' ? t('Ver listado','View list') : t('Ver IV por copia','View IVs per copy')).setStyle(ButtonStyle.Secondary).setDisabled(!session.entries.length),
   );
   return { embeds: [embed], components: [buttons], allowedMentions: { parse: [] } };
 }
@@ -46,7 +53,8 @@ async function showPokedex(message, target = message.author) {
   let token;
   try {
     sent = await message.reply({ content: t('📖 Cargando tu Pokédex…', "📖 Loading your Pokédex…"), allowedMentions: { repliedUser: false } });
-    const entries = await getPokedexEntries(message.guild.id, target.id);
+    const entries = await getPokedexEntries(message.guild.id, target.id, {includeCopies:true});
+    entries.sort((a,b)=>Number(!!a.isShiny)-Number(!!b.isShiny)||a.name.localeCompare(b.name,'en',{sensitivity:'base',numeric:true})||a.id-b.id);
     for (const entry of entries) {
       try { entry.emoji = getPreparedEmoji(message.guild.client, `pkv2_${entry.id}`); }
       catch { entry.emoji = '🔹'; } // Usable even while the emoji catalog is warming.
@@ -68,7 +76,8 @@ async function showPokedex(message, target = message.author) {
 }
 
 async function handlePokedexButton(interaction) {
-  const [, token, requestedPage] = interaction.customId.split(':');
+  const [, token, requestedPage, , requestedMode] = interaction.customId.split(':');
+  const mode=requestedMode || 'list';
   const session = sessions.get(token);
   if (!session || session.expires <= Date.now()) {
     if (session) sessions.delete(token);
@@ -80,11 +89,12 @@ async function handlePokedexButton(interaction) {
     return;
   }
   const page = Number(requestedPage);
-  if (!/^\d+$/.test(requestedPage || '') || page >= Math.max(1, Math.ceil(session.entries.length / PAGE_SIZE))) {
+  const count=mode==='iv'?session.entries.reduce((sum,p)=>sum+(p.copies?.length||0),0):session.entries.length;
+  if (!['list','iv'].includes(mode) || !/^\d+$/.test(requestedPage || '') || page >= Math.max(1, Math.ceil(count / PAGE_SIZE))) {
     await interaction.reply({ content: t('Página no válida.', "Invalid page."), flags: MessageFlags.Ephemeral });
     return;
   }
-  await interaction.update(renderPage(session, token, page));
+  await interaction.update(renderPage(session, token, page, mode));
 }
 
 module.exports = { showPokedex, handlePokedexButton };
