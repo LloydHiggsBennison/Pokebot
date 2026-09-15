@@ -1,11 +1,11 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const {loadModule}=require('./helpers');
 const {MessageFlags}=require('discord.js');
-function fixture(){
+function fixture({failRead=false}={}){
  const edits=[],fused=[],reveals=[];
  const candidates=Array.from({length:45},(_,i)=>({id:i+1,name:'pokemon'+(i+1),count:25}));
  const manager=loadModule('src/fusionSelection.js',{
-  './database':{getFuseCandidates:async(g,u)=>{assert.equal(g,'g');assert.equal(u,'u');return candidates;}},
+  './database':{getFuseCandidates:async(g,u)=>{assert.equal(g,'g');assert.equal(u,'u');if(failRead)throw Error('Read timeout');return candidates;}},
   './progressionStore':{
    copyPage:async(g,u,o)=>({total:25,rows:Array.from({length:o.page?5:20},(_,i)=>({id:o.page*20+i+1,pokemon_id:o.species,pokemon_name:'bulbasaur',level:5+i,experience:125}))}),
    fuseSelected:async(...args)=>{fused.push(args);return {id:1,pokemon_id:1,pokemon_name:'bulbasaur',level:5,is_shiny:1};},
@@ -13,7 +13,10 @@ function fixture(){
   './pokefuseManager':{revealFusion:async(...args)=>reveals.push(args)},
  });
  const i={customId:'pokefuse-open:u:0',guildId:'g',user:{id:'u'},message:{id:'private'},
-   async deferReply(p){this.flags=p.flags;},async deferUpdate(){this.deferred=true;},async editReply(p){edits.push(p);return {id:'private'};},async reply(p){this.replied=p;}};
+   async deferReply(p){this.flags=p.flags;},async deferUpdate(){this.deferred=true;},async editReply(p){
+    const ids=(p.components||[]).flatMap(row=>row.toJSON().components.map(c=>c.custom_id));
+    assert.equal(new Set(ids).size,ids.length,'Discord requires unique component identifiers, even for disabled buttons');
+    edits.push(p);return {id:'private'};},async reply(p){this.replied=p;}};
  return {manager,edits,fused,reveals,i};
 }
 test('fusion privately paginates all species then individual levelled copies; only final selection writes',async()=>{
@@ -36,6 +39,23 @@ test('fusion ownership checks protect private menus',async()=>{
  f.i.user.id='u';await f.manager.openPrivateFuse(f.i);
  f.i.customId=f.edits.at(-1).components[0].components[0].data.custom_id;f.i.values=['1'];f.i.user.id='other';
  await f.manager.handleFuseSelect(f.i);assert.equal(f.fused.length,0);assert.equal(f.edits.length,1);
+});
+
+test('fusion read errors resolve the deferred reply instead of leaving it thinking',async()=>{
+ const f=fixture({failRead:true});await f.manager.openPrivateFuse(f.i);
+ assert.equal(f.i.flags,MessageFlags.Ephemeral);
+ assert.match(f.edits.at(-1).content,/No se pudo abrir/);
+ assert.equal(f.fused.length,0);
+});
+
+test('fusion back button returns from individual copies to species with unique identifiers',async()=>{
+ const f=fixture();await f.manager.openPrivateFuse(f.i);
+ f.i.customId=f.edits.at(-1).components[0].components[0].data.custom_id;f.i.values=['1'];
+ await f.manager.handleFuseSelect(f.i);
+ f.i.customId=f.edits.at(-1).components[1].components[2].data.custom_id;
+ await f.manager.handleFuseSelect(f.i);
+ assert.match(f.edits.at(-1).embeds[0].data.description,/Elige la especie/);
+ assert.equal(f.fused.length,0);
 });
 test('animation failure still confirms completed transformation and allows replay without a database call',async()=>{
  let calls=0;

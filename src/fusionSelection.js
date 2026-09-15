@@ -12,7 +12,7 @@ function nav(token,mode,page,total){
   return new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId(`pokefuse-page:${token}:${mode}:${Math.max(0,page-1)}`).setEmoji('👈').setStyle(ButtonStyle.Secondary).setDisabled(page===0),
     new ButtonBuilder().setCustomId(`pokefuse-page:${token}:${mode}:${page+1}`).setEmoji('👉').setStyle(ButtonStyle.Secondary).setDisabled((page+1)*20>=total),
-    new ButtonBuilder().setCustomId(`pokefuse-page:${token}:species:0`).setLabel(t('Especies','Species')).setStyle(ButtonStyle.Secondary).setDisabled(mode==='species'));
+    new ButtonBuilder().setCustomId(`pokefuse-page:${token}:back:0`).setLabel(t('Especies','Species')).setStyle(ButtonStyle.Secondary).setDisabled(mode==='species'));
 }
 async function render(s,token,mode,page){
   let options,description,total;
@@ -43,6 +43,7 @@ async function openPrivateFuse(i){
   const [,owner,species]=i.customId.split(':');
   if(owner!==i.user.id)return i.reply({content:t('Este botón pertenece a otra persona.','This button belongs to someone else.'),flags:MessageFlags.Ephemeral});
   await i.deferReply({flags:MessageFlags.Ephemeral});
+  try {
   const own=await getFuseCandidates(i.guildId,i.user.id);
   if(!own.length)return i.editReply({content:t('Necesitas cinco copias normales iguales.','You need five matching regular copies.')});
   const token=randomUUID(),s={guildId:i.guildId,ownerId:i.user.id,candidates:own,expires:Date.now()+600000};
@@ -50,6 +51,10 @@ async function openPrivateFuse(i){
   if(sessions.size>=200)sessions.delete(sessions.keys().next().value);
   sessions.set(token,s);
   const sent=await i.editReply(await render(s,token,s.species?'copy':'species',0));s.messageId=sent.id;
+  } catch(error) {
+    console.error('[Fusion open]',error.message);
+    await i.editReply({content:t('No se pudo abrir el selector. Pulsa «Abrir selección privada» para reintentar.','Could not open the selector. Press “Open private selection” to retry.'),embeds:[],components:[]});
+  }
 }
 async function handleFuseSelect(i){
   const [,token,action,rawPage]=i.customId.split(':');
@@ -63,8 +68,8 @@ async function handleFuseSelect(i){
     await i.deferUpdate();
     if(i.customId.startsWith('pokefuse-page:')){
       if(s.request)throw Error('Retry the selected copy first');
-      if(!/^\d+$/.test(rawPage||'')||Number(rawPage)>100000||!['copy','species'].includes(action)||(action==='copy'&&!s.species))throw Error('Invalid page');
-      return await i.editReply(await render(s,token,action,Number(rawPage)));
+      if(!/^\d+$/.test(rawPage||'')||Number(rawPage)>100000||!['copy','species','back'].includes(action)||(action==='copy'&&!s.species))throw Error('Invalid page');
+      return await i.editReply(await render(s,token,action==='back'?'species':action,action==='back'?0:Number(rawPage)));
     }
     if(action==='species'){
       if(s.request)throw Error('Retry the selected copy first');
