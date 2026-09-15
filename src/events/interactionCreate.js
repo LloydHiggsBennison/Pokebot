@@ -2,6 +2,9 @@ const { t } = require('../i18n');
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction, client) {
+    if(interaction.isStringSelectMenu?.() && interaction.customId.startsWith('pokemarket:')){
+      await require('../marketManager').handleMarket(interaction);return;
+    }
     if(interaction.isButton?.() && interaction.customId.startsWith('pokefuse-open:')) {
       await require('../pokefuseManager').openPrivateFuse(interaction); return;
     }

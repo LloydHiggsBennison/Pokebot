@@ -179,6 +179,25 @@ Esta presentación no requiere migraciones adicionales.
 
 ## Capturas salvajes, Pokécoins e idiomas
 
+### Mercado Pokémon
+
+`$pokemarket` muestra seis ofertas aleatorias por servidor, renovadas cada hora.
+La lista respeta las tasas de rareza y es la misma para todos los miembros durante
+esa hora, incluso después de reiniciar el bot. Cada usuario puede comprar una copia
+normal de cada oferta por renovación. Seleccionar una oferta realiza la compra.
+
+Precios en Pokécoins: común 100, no común 250, súper raro 1.000, legendario 5.000,
+mítico 10.000. Se usa el mismo saldo ganado con las capturas salvajes; `$saldo`
+permite consultarlo. La compra añade el Pokémon a la Pokédex y descuenta el precio
+en una sola transacción. Reabrir el menú o reintentar no permite comprar la misma
+oferta dos veces. Solo quien abre el mercado puede usar su selector.
+
+Antes de usarlo, ejecutar en Supabase SQL Editor
+`supabase/migrations/20260915012019_pokemon_market.sql`.
+Requiere el esquema de capturas y la migración de monedas salvajes ya existentes.
+Las compras solo pueden ejecutarse con el rol del bot. SQLite crea su tabla de
+compras al iniciar el módulo.
+
 ### Colecciones de otros usuarios, regalos e intercambios
 
 - `$pokedex @usuario` muestra la colección de ese miembro del servidor.

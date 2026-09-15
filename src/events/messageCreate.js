@@ -9,6 +9,7 @@ module.exports = {
     if (message.author.bot || !message.guild) return;
 
     const content = message.content.trim();
+    if(content.toLowerCase()==='$pokemarket')return require('../marketManager').showMarket(message);
     if (/^(y|yes|si|sí|n|no)$/i.test(content) && await require('../transferManager').handleTransferReply(message)) return;
     if (/^\$p(?:k)?vw(?:\s|$)/i.test(content)) {
       return require('../pokemonViewManager').showPokemonView(message,content.replace(/^\$p(?:k)?vw\s*/i,''));
