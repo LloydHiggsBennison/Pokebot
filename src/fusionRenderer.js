@@ -39,7 +39,7 @@ function frameSvg(frame,normal,shiny,name,language) {
   }
   // The fifth, original Pokémon stays intact throughout the entire sequence.
   s+='<rect x="20" y="102" width="88" height="135" rx="12" fill="#101e35" stroke="#529a98"/>'+
-    '<text x="64" y="121" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#a6efe1">ORIGINAL</text>'+
+    '<text x="64" y="121" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#a6efe1">'+(en?'REMAINING':'RESTANTE')+'</text>'+
     image(normal,64,170,74)+'<text x="64" y="218" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#e1fff5">×1</text>';
   s+='<ellipse cx="'+cx+'" cy="249" rx="88" ry="13" fill="#071326"/>';
   for(let ring=0;ring<3;ring++){

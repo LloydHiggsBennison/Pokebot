@@ -26,10 +26,10 @@ CREATE INDEX IF NOT EXISTS captures_owner_pokemon_idx
   ON public.captures (guild_id, user_id, pokemon_name);
 ```
 
-Para habilitar `$pokefuse` en una instalación existente, ejecuta una vez
-`supabase_migration_pokefuse.sql` en el SQL Editor de Supabase. Añade la marca shiny,
-un índice para localizar cinco copias y una función transaccional que conserva una
-captura, consume cuatro y crea la shiny sin permitir doble consumo concurrente.
+Para habilitar la fusión individual y las batallas, ejecuta en el SQL Editor
+`supabase/migrations/20260915014322_pokemon_battles_progression.sql` después del
+esquema base. La migración sustituye el acceso a la fusión antigua para evitar
+duplicar el progreso de una copia.
 
 El código sigue siendo compatible con las tablas existentes aunque el índice aún no
 esté aplicado. En una tabla muy grande, el administrador puede crear el índice con
@@ -110,7 +110,8 @@ es local al proceso, no un bloqueo distribuido entre réplicas.
 |---|---|
 | `$p` | Tirada personal |
 | `$pokedex` | Colección personal paginada, con cantidades de Pokémon repetidos |
-| `$pokefuse` | Fusión personal: cinco copias normales iguales → conserva una y crea una shiny |
+| `$pokefuse` | Selección privada de especie y copia individual para transformar en shiny |
+| `$pokefight @usuario` | Batalla por turnos con aceptación y movimientos privados |
 | `<comando> <nombre>` | Atrapar el Pokémon salvaje activo |
 | `/pokeconfig canal` | Canal para apariciones salvajes |
 | `/pokeconfig modo` | `messages`, `time`, `both` |
@@ -156,13 +157,15 @@ de los permisos de mensajes existentes.
 
 ## Fusión shiny
 
-`$pokefuse` muestra un selector para el autor con cada especie que tiene al menos cinco
-copias normales. Al confirmar, la base de datos conserva la captura normal más antigua,
-consume exactamente cuatro y registra una captura shiny. Las shiny no cuentan como
-ingredientes para otra fusión. El selector expira en cinco minutos y rechaza clics de
-otros usuarios, servidores o mensajes.
+`$pokefuse` abre en privado un selector paginado de todas las especies con cinco
+copias normales. Después muestra las copias individuales, también paginadas, con
+ID, nivel, HP, ataque, defensa y experiencia. Seleccionar una copia la transforma
+en shiny sin crear otra: conserva ID, nivel, EXP y valores individuales. Se consumen
+otras tres copias disponibles de menor nivel, conservando al menos una normal.
+Las copias en batalla y las shiny no se pueden consumir. El selector expira en
+diez minutos. Los reintentos conservan el ID de operación y no consumen otra vez.
 
-Cada fusión confirmada muestra un GIF de 480×320 con 60 fotogramas: el original
+Cada fusión confirmada muestra un GIF de 480×320 con 60 fotogramas: una copia restante
 permanece a un lado, las otras cuatro copias se convierten en energía y aparece
 el sprite shiny de la misma especie entre destellos y estrellas. Dura unos siete
 segundos, se reproduce una vez y termina mostrando el shiny. Respeta español/inglés.
@@ -204,7 +207,7 @@ compras al iniciar el módulo.
   Las flechas las controla quien abrió la consulta.
 - `$pokefuse` publica solo un botón para abrir la selección privada.
   El menú y su resultado son efímeros: solo los ve quien lo abrió.
-  `$pokefuse nombre` sigue fusionando directamente.
+  `$pokefuse nombre` abre directamente la selección privada de copias de esa especie.
 - `$pokegive @usuario pikachu` ofrece una copia al destinatario.
 - `$poketrade @usuario charizard / blastoise` ofrece tu Charizard por su Blastoise.
   Puedes añadir `shiny` después de cualquiera de los nombres.
@@ -228,9 +231,9 @@ SQLite crea su tabla de control automáticamente.
 - `$p 12`: ejecuta 12 tiradas y reúne los premios por rareza en un listado.
   Acepta de 1 a 20; mantiene las probabilidades por tirada y aplica el cooldown
   del servidor al lote completo. Los repetidos se agrupan como x2, x3, etc.
-- `$pokefuse charizard`: fusiona directamente esa especie si el usuario tiene
-  al menos cinco copias normales. Consume cuatro, conserva el original y entrega
-  un shiny con la misma animación y botón de repetición. Sin nombre abre el selector.
+- `$pokefuse charizard`: abre la selección privada de tus Charizard individuales
+  si tienes al menos cinco normales. Eliges qué copia transformar conservando
+  su progreso; otras tres se consumen. Sin nombre abre el selector de especies.
 
 Los atajos respetan el idioma español/inglés del usuario.
 

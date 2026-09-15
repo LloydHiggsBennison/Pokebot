@@ -13,7 +13,7 @@ function loadModule(relative, mocks = {}, globals = {}) {
   vm.runInNewContext(fs.readFileSync(filename, 'utf8'), {
     require: localRequire, module, exports: module.exports, __dirname: path.dirname(filename),
     __filename: filename, process, Buffer, performance, setTimeout, clearTimeout,
-    setInterval, clearInterval, AbortSignal, fetch, URL,
+    setInterval, clearInterval, AbortSignal, fetch, URL, structuredClone,
     console: { log() {}, warn() {}, error() {} }, ...globals,
   }, { filename });
   return module.exports;

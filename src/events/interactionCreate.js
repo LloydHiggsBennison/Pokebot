@@ -2,6 +2,12 @@ const { t } = require('../i18n');
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction, client) {
+    if((interaction.isButton?.()||interaction.isStringSelectMenu?.()) && interaction.customId.startsWith('pokefight:')){
+      await require('../battleManager').handleBattle(interaction);return;
+    }
+    if(interaction.isButton?.() && interaction.customId.startsWith('pokefuse-page:')){
+      await require('../pokefuseManager').handleFuseSelect(interaction);return;
+    }
     if(interaction.isStringSelectMenu?.() && interaction.customId.startsWith('pokemarket:')){
       await require('../marketManager').handleMarket(interaction);return;
     }

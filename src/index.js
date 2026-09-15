@@ -14,6 +14,7 @@ const client = new Client({
   ],
 });
 const { getEmojiStatus } = require('./emojiManager');
+client.once('ready',()=>require('./battleManager').startBattleSweeper(client));
 startHealthServer(() => ({ connected: client.isReady(), emojis: getEmojiStatus(client) }));
 client.rest.on('rateLimited', info => {
   console.warn(JSON.stringify({ event: 'discord_rate_limit', route: info.route,
@@ -47,4 +48,3 @@ initializeLanguages().catch(error => console.error('[Idiomas]',error.message))
   console.error('[Login]', error.message);
   process.exit(1);
 });
-
