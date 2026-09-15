@@ -45,6 +45,8 @@ function fixture() {
       transferPokemon:async s=>{writes.push(s.id);if(fail){fail=false;throw Error('timeout');}return true;},
     },
   },{Date:{now:()=>now}});
+  const prepare=manager.showTransfer;
+  manager.showTransfer=(message,content)=>prepare(message,content,{give:{id:1,pokemon_id:6,pokemon_name:'charizard',is_shiny:content.includes('shiny')?1:0},take:content.startsWith('$poketrade')?{id:2,pokemon_id:9,pokemon_name:'blastoise',is_shiny:0}:null});
   const guild={id:'g',members:{fetch:async id=>members.has(id)?{user:{id,bot:false}}:null}};
   const message={guild,channel:{id:'c'},author:{id:'111'},reply:async payload=>{const m={id:'m'+sent.length,payload,async edit(p){this.payload=p;}};sent.push(m);return m;}};
   const click=(user='222',action='accept')=>{

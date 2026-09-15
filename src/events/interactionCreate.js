@@ -2,6 +2,7 @@ const { t } = require('../i18n');
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction, client) {
+    if((interaction.isButton?.()||interaction.isStringSelectMenu?.())&&interaction.customId.startsWith('transfercopy:'))return require('../transferSelection').handleSelection(interaction);
     if((interaction.isButton?.()||interaction.isStringSelectMenu?.()) && interaction.customId.startsWith('pokefight:')){
       await require('../battleManager').handleBattle(interaction);return;
     }

@@ -2,7 +2,8 @@ const {ActionRowBuilder,ButtonBuilder,ButtonStyle,MessageFlags}=require('discord
 const {randomUUID}=require('node:crypto');
 const catalog=require('../data/pokemon.json');
 const {resolveMention}=require('./guildMembers');
-const {findCapture,transferPokemon}=require('./transferStore');
+const {transferPokemon}=require('./transferStore');
+const {stats}=require('./battleEngine');
 const {t}=require('./i18n');
 const sessions=new Map(), pending=new Set(), pendingRecipients=new Set();
 const normalize=name=>name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/♀/g,'f').replace(/♂/g,'m').replace(/[^a-z0-9]/g,'');
@@ -14,13 +15,14 @@ function parsePokemon(text) {
 }
 function cleanup(){for(const [id,s] of sessions) if(!s.running && s.expires<=Date.now()) sessions.delete(id);}
 setInterval(cleanup,60000).unref();
-const label=p=>(p.is_shiny?'✨ ':'')+p.pokemon_name+(p.is_shiny?' shiny':'');
+const label=p=>{const a=stats(p);return (p.is_shiny?'✨ ':'')+p.pokemon_name+(p.is_shiny?' shiny':'')+` · #${p.id} · Lv. ${a.level} · IV ${(a.iv.reduce((sum,n)=>sum+n,0)/186*100).toFixed(2)}%`;};
 function controls(s) {
   return [new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId('poketransfer:'+s.id+':accept').setLabel(s.take?t('Aceptar intercambio','Accept trade'):t('Confirmar regalo','Confirm gift')).setStyle(ButtonStyle.Success),
     new ButtonBuilder().setCustomId('poketransfer:'+s.id+':cancel').setLabel(t('Cancelar','Cancel')).setStyle(ButtonStyle.Secondary))];
 }
-async function showTransfer(message,content) {
+async function showTransfer(message,content,selected) {
+  if(!selected)return require('./transferSelection').showSelection(message,content);
   const trade=/^\$poketrade(?:\s|$)/i.test(content);
   const args=content.replace(/^\$(poketrade|pokegive)\s*/i,'').match(/^(<@!?\d+>)\s+(.+)$/);
   const pieces=args?.[2].split(/\s*\/\s*/);
@@ -34,8 +36,8 @@ async function showTransfer(message,content) {
     if(!receiver || receiver.bot || receiver.id===message.author.id) return message.reply(t('Elige a otra persona de este servidor.','Choose another person in this server.'));
     const giveSpec=parsePokemon(pieces[0]),takeSpec=trade?parsePokemon(pieces[1]):null;
     if(!giveSpec || (trade && !takeSpec)) return message.reply(t('Nombre de Pokémon no válido. Revisa `$pokedex`.','Invalid Pokémon name. Check `$pokedex`.'));
-    const give=await findCapture(message.guild.id,message.author.id,giveSpec.id,giveSpec.isShiny);
-    const take=trade?await findCapture(message.guild.id,receiver.id,takeSpec.id,takeSpec.isShiny):null;
+    const give=selected.give;
+    const take=trade?selected.take:null;
     if(!give || (trade && !take)) return message.reply(t('Falta una de las copias indicadas. Revisa la especie y si es normal o shiny.','One of the specified copies is missing. Check the species and regular/shiny variant.'));
     cleanup();
     if(sessions.size>=200) return message.reply(t('Hay demasiadas ofertas pendientes. Intenta más tarde.','There are too many pending offers. Try later.'));
