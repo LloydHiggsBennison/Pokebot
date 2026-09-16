@@ -15,7 +15,7 @@ function parsePokemon(text) {
 }
 function cleanup(){for(const [id,s] of sessions) if(!s.running && s.expires<=Date.now()) sessions.delete(id);}
 setInterval(cleanup,60000).unref();
-const label=p=>{const a=stats(p);return (p.is_shiny?'✨ ':'')+p.pokemon_name+(p.is_shiny?' shiny':'')+` · #${p.id} · Lv. ${a.level} · IV ${(a.iv.reduce((sum,n)=>sum+n,0)/186*100).toFixed(2)}%`;};
+const label=p=>{const a=stats(p);return (p.is_shiny?'✨ ':'')+p.pokemon_name+(p.is_shiny?' shiny':'')+` · Lv. ${a.level} · IV ${(a.iv.reduce((sum,n)=>sum+n,0)/186*100).toFixed(2)}%`;};
 function controls(s) {
   return [new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId('poketransfer:'+s.id+':accept').setLabel(s.take?t('Aceptar intercambio','Accept trade'):t('Confirmar regalo','Confirm gift')).setStyle(ButtonStyle.Success),

@@ -24,7 +24,7 @@ async function render(s,token,mode,page){
   }else{
     const result=await copyPage(s.guildId,s.ownerId,{species:s.species.id,normalOnly:true,page});
     total=result.total;s.copies=result.rows;
-    options=result.rows.map(p=>{const a=stats(p);return {label:`#${p.id} · ${name(p.pokemon_name)} · Lv. ${a.level}`.slice(0,100),value:String(p.id),
+    options=result.rows.map(p=>{const a=stats(p);return {label:`${name(p.pokemon_name)} · Lv. ${a.level}`.slice(0,100),value:String(p.id),
       description:`HP ${a.hp} · ATK ${a.attack} · DEF ${a.defense} · EXP ${p.experience||0}`,emoji:p.battle_id&&p.battle_until>Date.now()?'🔒':'✨'};});
     description=t('Selecciona la copia que **se transformará** en shiny conservando su nivel, EXP y estadísticas. Se consumen otras 3 copias de menor nivel; queda al menos 1 normal.','Select the copy that **transforms** into shiny, keeping its level, XP and stats. Three other lower-level copies are consumed; at least one regular remains.');
   }

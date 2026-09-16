@@ -32,7 +32,7 @@ async function privatePayload(id,row,user,page=0){
     if(!rows.length)return {content:t('No hay Pokémon en esta página. Vuelve a abrir tu panel.','No Pokémon on this page. Open your panel again.'),embeds:[],components:[new ActionRowBuilder().addComponents(button(id,'decline:'+revision,t('Cancelar','Cancel')))]};
     return {content:t(`Elige tu Pokémon · Página ${page+1}/${Math.ceil(total/20)}. Seleccionar otra copia sustituye la elección mientras esperas.`,`Choose your Pokémon · Page ${page+1}/${Math.ceil(total/20)}. You can change your choice while waiting.`),embeds:[],
       components:[new ActionRowBuilder().addComponents(new StringSelectMenuBuilder().setCustomId(`pokefight:${id}:pick:${revision}`).setPlaceholder(t('Elegir copia','Choose a copy')).addOptions(rows.map(c=>{
-        const a=engine.stats(c);return {label:`#${c.id} ${c.is_shiny?'✨ ':''}${c.pokemon_name} Lv.${a.level}`.slice(0,100),value:String(c.id),description:`HP ${a.hp} · ATK ${a.attack} · DEF ${a.defense} · SPD ${a.speed}`};
+        const a=engine.stats(c);return {label:`${c.is_shiny?'✨ ':''}${c.pokemon_name} Lv.${a.level}`.slice(0,100),value:String(c.id),description:`HP ${a.hp} · ATK ${a.attack} · DEF ${a.defense} · SPD ${a.speed}`};
       }))),new ActionRowBuilder().addComponents(button(id,'page:'+Math.max(0,page-1),'👈').setDisabled(page===0),button(id,'page:'+(page+1),'👉').setDisabled((page+1)*20>=total),button(id,'decline:'+revision,t('Cancelar','Cancel')))]};
   }
   if(s.status!=='active')return {...publicPayload(id,row),content:t('La batalla terminó.','The battle has ended.')};

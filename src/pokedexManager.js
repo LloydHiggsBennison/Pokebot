@@ -26,7 +26,7 @@ function renderPage(session, token, page, mode = 'list') {
     const name = escapeMarkdown(p.name.charAt(0).toUpperCase() + p.name.slice(1));
     if (mode === 'iv') {
       const a=stats(p.copy),total=a.iv.reduce((sum,n)=>sum+n,0);
-      return `${p.isShiny ? '✨ ' : ''}${p.emoji} **${name}** · #${p.copy.id} · Lv. ${a.level} · **IV ${(total/186*100).toFixed(2)}%**\nHP ${a.iv[0]} · ATK ${a.iv[1]} · DEF ${a.iv[2]} · SpA ${a.iv[3]} · SpD ${a.iv[4]} · SPE ${a.iv[5]}`;
+      return `${p.isShiny ? '✨ ' : ''}${p.emoji} **${name}** · Lv. ${a.level} · **IV ${(total/186*100).toFixed(2)}%**\nHP ${a.iv[0]} · ATK ${a.iv[1]} · DEF ${a.iv[2]} · SpA ${a.iv[3]} · SpD ${a.iv[4]} · SPE ${a.iv[5]}`;
     }
     return `${p.isShiny ? '✨ ' : ''}${p.emoji} ${name}${p.count > 1 ? ` x${p.count}` : ''}`;
   }).join('\n') || t('Todavía no has capturado Pokémon. Usa `$p` para empezar tu colección.', "You have not caught any Pokémon yet. Use `$p` to start your collection.");

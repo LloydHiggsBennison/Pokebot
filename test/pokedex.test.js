@@ -103,7 +103,7 @@ test('pokedex sorts regular and shiny groups alphabetically and shows exact copy
   assert.match(lines[2],/^✨ .*Absol/);assert.match(lines[3],/^✨ .*Zubat/);
   const click=f.interaction(f.edits[0].components[0].components[2].data.custom_id);
   await f.manager.handlePokedexButton(click);
-  assert.match(click.updated.embeds[0].data.description,/#4 · Lv. 10 · \*\*IV 100.00%/);
+  assert.match(click.updated.embeds[0].data.description,/Lv. 10 · \*\*IV 100.00%/);
   assert.match(click.updated.embeds[0].data.description,/HP 31 · ATK 31 · DEF 31 · SpA 31 · SpD 31 · SPE 31/);
   assert.equal(f.reads.length,1);
 });

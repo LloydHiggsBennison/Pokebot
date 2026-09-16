@@ -22,7 +22,7 @@ async function showSelection(message,content){
 function panel(s,page){
  const rows=s.copies.slice(page*20,page*20+20);
  return {content:t(`Elige tu copia · Página ${page+1}/${Math.ceil(s.copies.length/20)}. Todavía no se transfiere ningún Pokémon.`,`Choose your copy · Page ${page+1}/${Math.ceil(s.copies.length/20)}. No Pokémon is transferred yet.`),components:[
- new ActionRowBuilder().addComponents(new StringSelectMenuBuilder().setCustomId(`transfercopy:${s.id}:pick:${s.phase}`).setPlaceholder(t('Seleccionar copia','Select copy')).addOptions(rows.map(c=>{const a=stats(c);return {label:`#${c.id} ${c.pokemon_name}${c.is_shiny?' ✨':''} · Lv. ${a.level}`.slice(0,100),value:String(c.id),description:`IV ${(a.iv.reduce((a,b)=>a+b,0)/186*100).toFixed(2)}% · HP ${a.hp} · ATK ${a.attack} · DEF ${a.defense}`};}))),
+ new ActionRowBuilder().addComponents(new StringSelectMenuBuilder().setCustomId(`transfercopy:${s.id}:pick:${s.phase}`).setPlaceholder(t('Seleccionar copia','Select copy')).addOptions(rows.map(c=>{const a=stats(c);return {label:`${c.pokemon_name}${c.is_shiny?' ✨':''} · Lv. ${a.level}`.slice(0,100),value:String(c.id),description:`IV ${(a.iv.reduce((a,b)=>a+b,0)/186*100).toFixed(2)}% · HP ${a.hp} · ATK ${a.attack} · DEF ${a.defense}`};}))),
  new ActionRowBuilder().addComponents(...[-1,1].map((step,k)=>new ButtonBuilder().setCustomId(`transfercopy:${s.id}:page:${s.phase}:${Math.max(0,page+step)}:${k}`).setEmoji(k?'👉':'👈').setStyle(ButtonStyle.Secondary).setDisabled(k?(page+1)*20>=s.copies.length:page===0)))]};
 }
 async function handleSelection(i){
