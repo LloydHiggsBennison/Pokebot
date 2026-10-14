@@ -12,8 +12,8 @@ module.exports = {
     if(/^\$pokefight(?:\s|$)/i.test(content))return require('../battleManager').challenge(message,content.slice(10).trim());
     if(content.toLowerCase()==='$pokemarket')return require('../marketManager').showMarket(message);
     if (/^(y|yes|si|sí|n|no)$/i.test(content) && await require('../transferManager').handleTransferReply(message)) return;
-    if (/^\$p(?:k)?vw(?:\s|$)/i.test(content)) {
-      return require('../pokemonViewManager').showPokemonView(message,content.replace(/^\$p(?:k)?vw\s*/i,''));
+    if (/^\$p(?:w|(?:k)?vw)(?:\s|$)/i.test(content)) {
+      return require('../pokemonViewManager').showPokemonView(message,content.replace(/^\$p(?:w|(?:k)?vw)\s*/i,''));
     }
     if (/^\$(idioma|language)(\s+(servidor|server))?$/i.test(content)) {
       return require('../languageManager').showLanguage(message, /\s/.test(content));

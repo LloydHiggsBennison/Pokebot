@@ -63,7 +63,7 @@ test('pkvw and pvw aliases route names and shiny arguments before other commands
     '../spawnManager':{},'../puzzleManager':{},'../database':{getGuildSettings(){throw Error('Wrong route');}},
     '../pokemonViewManager':{showPokemonView:async(m,name)=>calls.push(name)},
   });
-  for(const content of ['$pkvw charizard','$pvw charizard shiny','$PKVW Mr. Mime'])
+  for(const content of ['$pkvw charizard','$pvw charizard shiny','$PKVW Mr. Mime','$pw pikachu','$PW pikachu shiny'])
     await event.execute({content,author:{bot:false},guild:{}},{});
-  assert.deepEqual(calls,['charizard','charizard shiny','Mr. Mime']);
+  assert.deepEqual(calls,['charizard','charizard shiny','Mr. Mime','pikachu','pikachu shiny']);
 });
