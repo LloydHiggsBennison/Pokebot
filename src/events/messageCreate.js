@@ -9,6 +9,13 @@ module.exports = {
     if (message.author.bot || !message.guild) return;
 
     const content = message.content.trim();
+    if((process.env.COMMERCE_ENABLED==='true')){
+      if(/^\$(pokewallet|plvl|poketickets)(?:\s|$)/i.test(content)||content.toLowerCase()==='$pokemarket')return require('../commerceManager').show(message,content);
+      if(/^\$(pokefuse|poketrade)(?:\s|$)/i.test(content)){
+        const s=await require('../commerceStore').state(message.guild.id,message.author.id);
+        if(!s.personal)return message.reply(t('Esta función requiere premium personal. Usa `/pokeshop`.','This feature requires personal premium. Use `/pokeshop`.'));
+      }
+    }
     if(/^\$pokefight(?:\s|$)/i.test(content))return require('../battleManager').challenge(message,content.slice(10).trim());
     if(content.toLowerCase()==='$pokemarket')return require('../marketManager').showMarket(message);
     if (/^(y|yes|si|sí|n|no)$/i.test(content) && await require('../transferManager').handleTransferReply(message)) return;

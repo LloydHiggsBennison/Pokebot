@@ -9,6 +9,13 @@ const PORT = process.env.PORT || 3000;
  */
 function startHealthServer(getStatus = () => ({})) {
   const server = http.createServer((req, res) => {
+    if(req.url?.split('?')[0].startsWith('/paypal/')) {
+      require('./paypalHttp').handle(req,res).catch(error=>{
+        console.error('[PayPal HTTP]',error.message);
+        if(!res.headersSent)res.writeHead(503,{'Content-Type':'text/plain; charset=utf-8'});
+        res.end('Payment processing unavailable. Retry from Discord.');
+      });return;
+    }
     if (req.method === 'GET' && (req.url === '/' || req.url === '/ready')) {
       const state = getStatus();
       const ready = Boolean(state.connected && state.emojis?.status === 'ready');

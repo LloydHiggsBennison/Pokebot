@@ -12,7 +12,7 @@ async function transferPokemon(offer) {
   const params={p_request_id:offer.id,p_guild_id:offer.guildId,p_sender_id:offer.senderId,p_receiver_id:offer.receiverId,
     p_give_id:String(offer.give.id),p_take_id:offer.take?String(offer.take.id):null};
   if(supabase) {
-    const {data,error}=await supabase.rpc('transfer_pokemon',params);
+    const {data,error}=await supabase.rpc((process.env.COMMERCE_ENABLED==='true')?'commerce_transfer':'transfer_pokemon',params);
     if(error) throw error;
     return data;
   }

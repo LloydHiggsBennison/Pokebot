@@ -44,6 +44,7 @@ async function openPrivateFuse(i){
   if(owner!==i.user.id)return i.reply({content:t('Este botón pertenece a otra persona.','This button belongs to someone else.'),flags:MessageFlags.Ephemeral});
   await i.deferReply({flags:MessageFlags.Ephemeral});
   try {
+  if(process.env.COMMERCE_ENABLED==='true'&&!(await require('./commerceStore').state(i.guildId,i.user.id)).personal)return await i.editReply(t('La fusión requiere premium personal. Usa `/pokeshop`.','Fusion requires personal premium. Use `/pokeshop`.'));
   const own=await getFuseCandidates(i.guildId,i.user.id);
   if(!own.length)return i.editReply({content:t('Necesitas cinco copias normales iguales.','You need five matching regular copies.')});
   const token=randomUUID(),s={guildId:i.guildId,ownerId:i.user.id,candidates:own,expires:Date.now()+600000};

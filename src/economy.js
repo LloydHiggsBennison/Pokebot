@@ -38,7 +38,7 @@ async function getBalance(guild, user) {
 }
 async function recordWildCapture(guild,user,p) {
   if (supabase) {
-    const {data,error}=await supabase.rpc('record_wild_capture',{
+    const {data,error}=await supabase.rpc((process.env.COMMERCE_ENABLED==='true')?'commerce_wild':'record_wild_capture',{
       p_encounter_id:p.encounterId,p_guild_id:guild,p_user_id:user,p_pokemon_id:p.id,
       p_pokemon_name:p.name,p_level:p.level,p_iv_total:p.ivTotal,p_rarity:p.rarity,p_coins:p.coins,
     });
@@ -59,4 +59,3 @@ async function recordWildCapture(guild,user,p) {
   })();
 }
 module.exports={loadLanguages,saveLanguage,getBalance,recordWildCapture};
-

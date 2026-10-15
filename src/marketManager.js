@@ -38,6 +38,7 @@ async function showMarket(message){
   }finally{busy.delete(key);}
 }
 async function handleMarket(i){
+  if(process.env.COMMERCE_ENABLED==='true')return i.reply({content:t('Este mercado fue reemplazado. Abre `$pokemarket` para comprar tiradas especiales.','This market was replaced. Open `$pokemarket` to buy special rolls.'),flags:MessageFlags.Ephemeral});
   const [,owner,rawRotation]=i.customId.split(':');
   const reply=content=>i.reply({content,flags:MessageFlags.Ephemeral});
   if(i.user.id!==owner)return reply(t('Abre tu propio mercado con `$pokemarket`.','Open your own market with `$pokemarket`.'));

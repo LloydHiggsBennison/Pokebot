@@ -87,6 +87,10 @@ async function handleTransfer(i) {
     sessions.delete(id);
   } catch(error) {
     console.error('[Poketransfer]',error.message);
+    if(/premium|Daily gift limit/i.test(error.message)){
+      sessions.delete(id);
+      return await i.editReply({content:t('No se transfirió ningún Pokémon: se alcanzó el límite diario de regalos o falta premium personal para uno de los participantes del intercambio.','No Pokémon was transferred: daily gift limit reached, or one trader lacks personal premium.'),embeds:[],components:[]});
+    }
     if(i.deferred) await i.editReply({content:t('No se pudo confirmar el resultado. Revisa las Pokédex y pulsa aceptar para comprobar la misma operación sin duplicarla.','Could not confirm the result. Check both Pokédex collections and accept again to verify the same operation without duplicating it.'),components:controls(s)});
   } finally {s.running=false;}
 }

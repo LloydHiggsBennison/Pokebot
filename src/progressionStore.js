@@ -21,6 +21,7 @@ async function getCopy(guild,user,id){
   if(error)throw error;return data;
 }
 async function fuseSelected(guild,user,id,request=randomUUID()){
+  if((process.env.COMMERCE_ENABLED==='true'))return require('./commerceStore').rpc('commerce_fuse',{p_request:request,p_guild:guild,p_user:user,p_capture:id});
   if(!supabase)return require('./progressionSqlite').fuse(sqlite,guild,user,id,request);
   const {data,error}=await supabase.rpc('fuse_selected_pokemon',{p_request:request,p_guild:guild,p_user:user,p_capture:id});
   if(error)throw error;return data;
@@ -31,7 +32,7 @@ async function getBattle(id){
 }
 async function saveBattle(id,revision,actor,state){
   if(!supabase)return require('./progressionSqlite').save(sqlite,id,revision,actor,state);
-  const {data,error}=await supabase.rpc('save_pokemon_battle',{p_id:id,p_expected:revision,p_actor:actor,p_state:state});
+  const {data,error}=await supabase.rpc((process.env.COMMERCE_ENABLED==='true')?'commerce_save_battle':'save_pokemon_battle',{p_id:id,p_expected:revision,p_actor:actor,p_state:state});
   if(error)throw error;return data;
 }
 async function expiredBattles(){

@@ -20,7 +20,6 @@ async function catchWild(message,guess) {
   return message.reply({content:t(
     `¡Felicidades **<@${message.author.id}>**! ¡Atrapaste un ${name} de nivel ${result.level} (${iv}%)! Añadido a tu Pokédex. ¡Recibiste ${result.coins} Pokécoins!`,
     `Congratulations **<@${message.author.id}>**! You caught a Level ${result.level} ${name} (${iv}%)! Added to Pokédex. You received ${result.coins} Pokécoins!`
-  ),allowedMentions:{users:[message.author.id],repliedUser:false}});
+  )+(process.env.COMMERCE_ENABLED==='true'?t(' 🍬 Recibiste 1 caramelo EXP (+1.000 EXP con `$plvl`).',' 🍬 You received 1 EXP candy (+1,000 XP with `$plvl`).'):''),allowedMentions:{users:[message.author.id],repliedUser:false}});
 }
 module.exports={catchWild};
-

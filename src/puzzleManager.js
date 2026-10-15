@@ -83,7 +83,7 @@ async function executeRoll(message, providedSettings, started, quantity) {
   const username = message.author.username; // sin @ ni mención
 
   const settings = providedSettings || await getGuildSettings(guildId);
-  const cooldownMs = (settings.puzzle_cooldown_seconds ?? 0) * 1000;
+  const cooldownMs = process.env.COMMERCE_ENABLED === 'true' ? 0 : (settings.puzzle_cooldown_seconds ?? 0) * 1000;
   const lastRoll = cooldownMs > 0 ? await getLastRoll(guildId, userId) : 0;
   const settingsDone = performance.now();
   const now = Date.now();
@@ -151,12 +151,17 @@ async function executeRoll(message, providedSettings, started, quantity) {
   );
 
   // 5. Finish both writes before releasing the user lock, also on failure.
+  if((process.env.COMMERCE_ENABLED==='true')){
+    const r=await require('./commerceStore').action(guildId,userId,message.id,'roll',{quantity:quantity??1,winners});
+    if(r.status==='roll_limit'){await message.reply(t(`Te quedan ${r.remaining} tiradas. Se renuevan <t:${r.reset}:R>.`,`You have ${r.remaining} rolls left. Resets <t:${r.reset}:R>.`));return;}
+  }else{
   const writes = await Promise.allSettled([
     setLastRoll(guildId, userId, now),
     addCaptures(guildId, userId, winners),
   ]);
   const failure = writes.find(result => result.status === 'rejected');
   if (failure) throw failure.reason;
+  }
   const databaseDone = performance.now();
 
   if (quantity !== undefined) {
