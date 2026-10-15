@@ -17,7 +17,9 @@ COMMERCE_ENABLED no está activado. Los pagos reales aún no están verificados.
 5. Activar COMMERCE_ENABLED=true en Render y esperar el despliegue.
 6. Probar /pokeshop usando una cuenta compradora Sandbox diferente de la
    cuenta vendedora. Verificar el pago y consultar $pokewallet. Repetir la
-   verificación y comprobar que no se duplica el premio. Canjear tickets,
+   entrega del webhook y comprobar que no se duplica el premio. El botón
+   Verificar pago queda deshabilitado tras el primer clic, incluso ante un error.
+   Los pagos pendientes se confirman automáticamente por webhook. Canjear tickets,
    probar una suscripción y cancelar su renovación desde PayPal.
 
 Sandbox solo permite compras al propietario. Sus premios se guardan realmente

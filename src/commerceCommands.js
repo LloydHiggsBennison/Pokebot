@@ -5,6 +5,29 @@ const {PRODUCTS}=require('./commerceCatalog');
 const {t}=require('./i18n');
 const owner=i=>i.user.id===(process.env.BOT_OWNER_ID||'468832874066608135');
 const setupLocks=new Set();
+const paymentChecks=new Set();
+async function verifyPayment(i,user,id){
+ const key=i.message.id;
+ const used=i.message.components.some(row=>row.components.some(button=>button.customId===i.customId&&button.disabled));
+ if(used||paymentChecks.has(key))return i.reply({content:t('Esta verificación ya fue utilizada. Consulta `$pokewallet`.','This verification was already used. Check `$pokewallet`.'),flags:MessageFlags.Ephemeral});
+ paymentChecks.add(key);
+ setTimeout(()=>paymentChecks.delete(key),15*60*1000).unref();
+ await i.deferUpdate();
+ const components=i.message.components.map(row=>new ActionRowBuilder().addComponents(row.components.map(button=>{
+  const copy=ButtonBuilder.from(button);
+  if(button.customId===i.customId)copy.setDisabled(true);
+  return copy;
+ })));
+ try{
+  await i.editReply({content:t('Comprobando el pago…','Checking payment…'),components});
+  const c=await store.query('commerce_checkouts','select',null,{id,user_id:user,guild_id:i.guildId});if(!c)throw Error('Unknown checkout');
+  const r=await paypal.settle(c);
+  await i.editReply({content:r.pending?t('Pago aún no confirmado. Si falta, completa el pago en PayPal. Se acreditará automáticamente al confirmarse; revisa `$pokewallet`.','Payment not confirmed yet. Complete payment in PayPal if needed. It will be credited automatically when confirmed; check `$pokewallet`.'):t('✅ Pago verificado. Beneficios acreditados una sola vez. Consulta `$pokewallet`.','✅ Payment verified. Benefits credited once. Check `$pokewallet`.'),components});
+ }catch(e){
+  console.error('[PayPal verification]',e.message);
+  await i.editReply({content:t('No se pudo confirmar el pago. Si ya pagaste, no hagas otra compra: la confirmación automática puede llegar después. Revisa `$pokewallet` y contacta al administrador si no se acredita.','Could not confirm payment. If already paid, do not purchase again: automatic confirmation may arrive later. Check `$pokewallet` and contact the administrator if it is not credited.'),components});
+ }
+}
 const commands={
  paypalsetup:{data:new SlashCommandBuilder().setName('paypalsetup').setDescription('Configurar PayPal (solo propietario del bot)').setDMPermission(false),async execute(i){
   if(!owner(i))return i.reply({content:'Solo el propietario del bot.',flags:MessageFlags.Ephemeral});
@@ -31,14 +54,13 @@ async function handle(i){
  if(!store.enabled())return i.reply({content:t('La tienda no está disponible.','Shop unavailable.'),flags:MessageFlags.Ephemeral});
  const [type,user,id]=i.customId.split(':');
  if(i.user.id!==user)return i.reply({content:t('Este panel pertenece a otra persona.','This panel belongs to another person.'),flags:MessageFlags.Ephemeral});
+ if(type==='paycheck')return verifyPayment(i,user,id);
  await i.deferReply({flags:MessageFlags.Ephemeral});
  try{
   if(type==='pokeshop'){
    const sku=i.values[0],c=await paypal.createCheckout(i.guildId,user,sku);
    return await i.editReply({content:t('Abre PayPal para aprobar el pago. Después pulsa «Verificar pago».','Open PayPal to approve payment. Then press “Verify payment”.'),components:[new ActionRowBuilder().addComponents(new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('PayPal').setURL(c.url),new ButtonBuilder().setStyle(ButtonStyle.Primary).setLabel(t('Verificar pago','Verify payment')).setCustomId(`paycheck:${user}:${c.id}`))]});
   }
-  const c=await store.query('commerce_checkouts','select',null,{id,user_id:user,guild_id:i.guildId});if(!c)throw Error('Unknown checkout');
-  const r=await paypal.settle(c);return await i.editReply(r.pending?t('Pago aún no confirmado. Completa la aprobación en PayPal y vuelve a verificar.','Payment not confirmed yet. Complete PayPal approval and verify again.'):t('✅ Pago verificado. Beneficios acreditados una sola vez. Consulta `$pokewallet`.','✅ Payment verified. Benefits credited once. Check `$pokewallet`.'));
- }catch(e){console.error('[PayPal checkout]',e.message);await i.editReply(t('No se pudo confirmar el pago. Reintenta verificar la misma compra; no abras otro pago si ya pagaste.','Could not confirm payment. Retry verifying the same purchase; do not open another payment if you already paid.'));}
+ }catch(e){console.error('[PayPal checkout]',e.message);await i.editReply(t('No se pudo abrir el pago. Si ya pagaste, consulta `$pokewallet` antes de iniciar otra compra.','Could not open payment. If already paid, check `$pokewallet` before starting another purchase.'));}
 }
 module.exports={commands,handle};
